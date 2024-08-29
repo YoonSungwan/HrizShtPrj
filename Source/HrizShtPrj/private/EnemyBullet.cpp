@@ -32,13 +32,14 @@ void AEnemyBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	this->FireStraight(DeltaTime);
 }
 
-void AEnemyBullet::fire()
+void AEnemyBullet::FireStraight(float DeltaTime)
 {
 	if (isTrace) {
-		FVector startLoc = GetActorLocation();
-		
+		FVector newLocation = GetActorLocation() + GetActorForwardVector() * attackSpeed * DeltaTime;
+		SetActorLocation(newLocation);
 	}
 }
 

@@ -38,5 +38,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool isTrace = true;
 
-	void fire();
+	void FireStraight(float DeltaTime);
 };

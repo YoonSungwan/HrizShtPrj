@@ -30,7 +30,9 @@ public:
 	class USkeletalMeshComponent* skelMeshComp;
 
 	UPROPERTY(EditAnywhere)
-	//class AEnemyBullet* bullet;
+	class UArrowComponent* firePosition;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEnemyBullet> bullet;
 
 	UPROPERTY(EditAnywhere)
@@ -45,8 +47,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool isDead = false;
 
+	APawn* player;
+	
 	//공격
-	void attackPlayer();
+	void attackPlayer(float DeltaTime);
 
 	//피격
 	void hit(int Damage);
@@ -55,6 +59,7 @@ public:
 	void death();
 
 	//이동패턴 - 플레이어 추적
+	void traceToPlayer(float DeltaTime);
 
 	//이동패턴 - 이탈
 

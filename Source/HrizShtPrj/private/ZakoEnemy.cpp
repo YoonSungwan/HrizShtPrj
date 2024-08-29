@@ -4,6 +4,7 @@
 #include "ZakoEnemy.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/ArrowComponent.h"
 #include "EnemyBullet.h"
 
 // Sets default values
@@ -20,13 +21,21 @@ AZakoEnemy::AZakoEnemy()
 	skelMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh Component"));
 	skelMeshComp->SetupAttachment(capsComp);
 
+	//Åº¸· Arrow ÄÄÆ÷³ÍÆ®
+	firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Component"));
+	firePosition->SetupAttachment(skelMeshComp);
 }
 
 // Called when the game starts or when spawned
 void AZakoEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		player = PlayerController->GetPawn();
+	}
 }
 
 // Called every frame
@@ -34,13 +43,19 @@ void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	traceToPlayer(DeltaTime);;
+	attackPlayer(DeltaTime);
 }
 
-void AZakoEnemy::attackPlayer()
+void AZakoEnemy::attackPlayer(float DeltaTime)
 {
-	if (currentTime > attackDelay) {
+	if (currentTime > attackDelay)
+	{
 		currentTime = 0;
 		AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(bullet, GetActorLocation(), GetActorRotation());
+	} else
+	{
+		currentTime += DeltaTime;
 	}
 }
 
@@ -61,5 +76,13 @@ void AZakoEnemy::death()
 
 	isDead = true;
 	AZakoEnemy::Destroy();
+}
 
+void AZakoEnemy::traceToPlayer(float DeltaTime)
+{
+	FVector enemyLoc = this->GetActorLocation();
+	FVector dir = (player->GetActorLocation()) - enemyLoc;
+	dir.Normalize();
+
+	this->SetActorLocation(enemyLoc + (dir * DeltaTime * moveSpd));
 }
