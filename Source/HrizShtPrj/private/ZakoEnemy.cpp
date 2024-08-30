@@ -36,6 +36,8 @@ void AZakoEnemy::BeginPlay()
 	{
 		player = PlayerController->GetPawn();
 	}
+	
+	this->tracePlayer();
 }
 
 // Called every frame
@@ -43,8 +45,6 @@ void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	traceToPlayer(DeltaTime);;
-	attackPlayer(DeltaTime);
 }
 
 void AZakoEnemy::attackPlayer(float DeltaTime)
@@ -78,11 +78,25 @@ void AZakoEnemy::death()
 	AZakoEnemy::Destroy();
 }
 
-void AZakoEnemy::traceToPlayer(float DeltaTime)
+void AZakoEnemy::tracePlayer()
 {
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
 	FVector enemyLoc = this->GetActorLocation();
 	FVector dir = (player->GetActorLocation()) - enemyLoc;
 	dir.Normalize();
 
 	this->SetActorLocation(enemyLoc + (dir * DeltaTime * moveSpd));
+}
+
+void AZakoEnemy::moving(FVector pointPos, bool isTrace)
+{
+	if (isTrace)
+	{
+		this->tracePlayer();
+	}
+}
+
+void AZakoEnemy::escapeMap(FVector direction)
+{
 }

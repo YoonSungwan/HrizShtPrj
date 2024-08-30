@@ -31,15 +31,27 @@ void AEnemyBullet::BeginPlay()
 void AEnemyBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	this->FireStraight(DeltaTime);
+	
 }
 
-void AEnemyBullet::FireStraight(float DeltaTime)
+void AEnemyBullet::FireBullet()
 {
-	if (isTrace) {
-		FVector newLocation = GetActorLocation() + GetActorForwardVector() * attackSpeed * DeltaTime;
-		SetActorLocation(newLocation);
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	FVector dir = GetActorForwardVector();
+	
+	if (isTrace)
+	{
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		APawn* player;
+		if (PlayerController)
+		{
+			player = PlayerController->GetPawn();
+			dir = player->GetActorLocation();
+		}
 	}
+
+	FVector newLocation = GetActorLocation() + dir * attackSpeed * DeltaTime;
+	SetActorLocation(newLocation);
+	
 }
 

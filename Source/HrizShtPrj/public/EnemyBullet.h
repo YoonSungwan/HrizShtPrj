@@ -36,7 +36,8 @@ public:
 	int damage = 100;
 
 	UPROPERTY(EditAnywhere)
-	bool isTrace = true;
+	bool isTrace = false;
 
-	void FireStraight(float DeltaTime);
+	void FireBullet();
+	void DestoryBullet();
 };

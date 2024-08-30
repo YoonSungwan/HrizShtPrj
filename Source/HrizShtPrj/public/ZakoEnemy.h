@@ -49,24 +49,13 @@ public:
 
 	APawn* player;
 	
-	//공격
 	void attackPlayer(float DeltaTime);
-
-	//피격
 	void hit(int Damage);
-
-	//사망
 	void death();
 
-	//이동패턴 - 플레이어 추적
-	void traceToPlayer(float DeltaTime);
-
-	//이동패턴 - 이탈
-
-	//이동패턴 - 고정
-
-	//이동패턴 - 고정 후 이탈
-
+	void moving(FVector pointPos, bool isTrace);
+	void tracePlayer();
+	void escapeMap(FVector direction);
 
 private:
 	float currentTime = 0;
