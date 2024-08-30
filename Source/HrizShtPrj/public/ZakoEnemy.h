@@ -44,8 +44,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	float attackDelay = 3;
 
-	UPROPERTY(EditAnywhere)
-	bool isDead = false;
+	UPROPERTY(EditAnywhere, Category="Pattern")
+	bool isFire = false;
+
+	UPROPERTY(EditAnywhere, Category = "Pattern")
+	bool isTrace = false;
+
+	UFUNCTION()
+	void OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
 
 	APawn* player;
 	
@@ -53,11 +61,13 @@ public:
 	void hit(int Damage);
 	void death();
 
-	void moving(FVector pointPos, bool isTrace);
-	void tracePlayer();
-	void escapeMap(FVector direction);
+	void moving(FVector pointPos, float DeltaTime);
+	void tracePlayer(float DeltaTime);
+	void escapeMap(FVector escapeDir, float DeltaTime);
+	void rotatePlayer(float DeltaTime);
 
 private:
 	float currentTime = 0;
+	FVector direction;
 
 };

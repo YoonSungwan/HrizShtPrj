@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "EnemyBullet.h"
 
 // Sets default values
@@ -36,8 +37,15 @@ void AZakoEnemy::BeginPlay()
 	{
 		player = PlayerController->GetPawn();
 	}
-	
-	this->tracePlayer();
+
+	direction = player->GetActorLocation() - this->GetActorLocation();
+	direction.Normalize();
+
+	capsComp->OnComponentBeginOverlap.AddDynamic(this, &AZakoEnemy::OnBulletOverlap);
+
+	capsComp->SetGenerateOverlapEvents(true);
+	capsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	capsComp->SetCollisionProfileName(TEXT("OverlapAll"));
 }
 
 // Called every frame
@@ -45,10 +53,22 @@ void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (isFire) 
+	{
+		this->attackPlayer(DeltaTime);
+	}
+
+	if (isTrace) 
+	{
+		this->tracePlayer(DeltaTime);
+	}
+	
 }
 
 void AZakoEnemy::attackPlayer(float DeltaTime)
 {
+	this->rotatePlayer(DeltaTime);
+
 	if (currentTime > attackDelay)
 	{
 		currentTime = 0;
@@ -58,6 +78,7 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 		currentTime += DeltaTime;
 	}
 }
+
 
 void AZakoEnemy::hit(int Damage)
 {
@@ -74,29 +95,49 @@ void AZakoEnemy::death()
 		return;
 	}
 
-	isDead = true;
 	AZakoEnemy::Destroy();
 }
 
-void AZakoEnemy::tracePlayer()
+
+void AZakoEnemy::tracePlayer(float DeltaTime)
 {
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
-
-	FVector enemyLoc = this->GetActorLocation();
-	FVector dir = (player->GetActorLocation()) - enemyLoc;
-	dir.Normalize();
-
-	this->SetActorLocation(enemyLoc + (dir * DeltaTime * moveSpd));
+	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
 }
 
-void AZakoEnemy::moving(FVector pointPos, bool isTrace)
+
+void AZakoEnemy::moving(FVector pointPos, float DeltaTime)
 {
-	if (isTrace)
+	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
+}
+
+
+void AZakoEnemy::escapeMap(FVector escapeDir, float DeltaTime)
+{
+	SetActorLocation(this->GetActorLocation() + escapeDir * DeltaTime * moveSpd);
+}
+
+
+void AZakoEnemy::rotatePlayer(float DeltaTime)
+{
+	if (player != nullptr)
 	{
-		this->tracePlayer();
+		FVector directionToPlayer = (player->GetActorLocation()) - (this->GetActorLocation());
+		FRotator desiredRotation = directionToPlayer.Rotation();
+		FRotator newRotation = FMath::RInterpTo(GetActorRotation(), desiredRotation, DeltaTime, 500);
+
+		SetActorRotation(newRotation);
 	}
 }
 
-void AZakoEnemy::escapeMap(FVector direction)
+
+// Damage Event
+void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
+	if (player != nullptr && player == Cast<APawn>(OtherActor))
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, 50, nullptr, this, nullptr);
+		this->Destroy();
+	}
+
 }

@@ -4,7 +4,8 @@
 #include "EnemyBullet.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "ZakoEnemy.h"
 
 // Sets default values
 AEnemyBullet::AEnemyBullet()
@@ -18,6 +19,9 @@ AEnemyBullet::AEnemyBullet()
 	bulletComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("static mesh Component"));
 	bulletComp->SetupAttachment(capsComp);
 
+	capsComp->SetGenerateOverlapEvents(true);
+	capsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	capsComp->SetCollisionProfileName(TEXT("OverlapAll"));
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +29,13 @@ void AEnemyBullet::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	capsComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemyBullet::OnBulletOverlap);
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		player = PlayerController->GetPawn();
+	}
 }
 
 // Called every frame
@@ -32,26 +43,30 @@ void AEnemyBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	this->FireBullet(DeltaTime);
 }
 
-void AEnemyBullet::FireBullet()
+// Damage Event
+void AEnemyBullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
-	FVector dir = GetActorForwardVector();
-	
+
+	if (player != nullptr && player == Cast<APawn>(OtherActor))
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, damage, nullptr, this, nullptr);
+		this->Destroy();
+	}
+}
+
+// Fire Event
+void AEnemyBullet::FireBullet(float DeltaTime)
+{
+	FVector dir = this->GetActorForwardVector();
+
 	if (isTrace)
 	{
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		APawn* player;
-		if (PlayerController)
-		{
-			player = PlayerController->GetPawn();
-			dir = player->GetActorLocation();
-		}
+		dir = player->GetActorLocation();
 	}
 
-	FVector newLocation = GetActorLocation() + dir * attackSpeed * DeltaTime;
+	FVector newLocation = this->GetActorLocation() + dir * attackSpeed * DeltaTime;
 	SetActorLocation(newLocation);
-	
 }
-
