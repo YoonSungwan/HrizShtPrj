@@ -30,7 +30,9 @@ public:
 	class USkeletalMeshComponent* skelMeshComp;
 
 	UPROPERTY(EditAnywhere)
-	//class AEnemyBullet* bullet;
+	class UArrowComponent* firePosition;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AEnemyBullet> bullet;
 
 	UPROPERTY(EditAnywhere)
@@ -42,28 +44,30 @@ public:
 	UPROPERTY(EditAnywhere)
 	float attackDelay = 3;
 
-	UPROPERTY(EditAnywhere)
-	bool isDead = false;
+	UPROPERTY(EditAnywhere, Category="Pattern")
+	bool isFire = false;
 
-	//공격
-	void attackPlayer();
+	UPROPERTY(EditAnywhere, Category = "Pattern")
+	bool isTrace = false;
 
-	//피격
+	UFUNCTION()
+	void OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
+
+	APawn* player;
+	
+	void attackPlayer(float DeltaTime);
 	void hit(int Damage);
-
-	//사망
 	void death();
 
-	//이동패턴 - 플레이어 추적
-
-	//이동패턴 - 이탈
-
-	//이동패턴 - 고정
-
-	//이동패턴 - 고정 후 이탈
-
+	void moving(FVector pointPos, float DeltaTime);
+	void tracePlayer(float DeltaTime);
+	void escapeMap(FVector escapeDir, float DeltaTime);
+	void rotatePlayer(float DeltaTime);
 
 private:
 	float currentTime = 0;
+	FVector direction;
 
 };
