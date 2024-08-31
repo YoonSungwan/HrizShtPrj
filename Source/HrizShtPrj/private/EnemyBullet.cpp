@@ -10,7 +10,7 @@
 // Sets default values
 AEnemyBullet::AEnemyBullet()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	capsComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Root Component"));
@@ -19,16 +19,14 @@ AEnemyBullet::AEnemyBullet()
 	bulletComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("static mesh Component"));
 	bulletComp->SetupAttachment(capsComp);
 
-	capsComp->SetGenerateOverlapEvents(true);
-	capsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	capsComp->SetCollisionProfileName(TEXT("OverlapAll"));
+	capsComp->SetCollisionProfileName(TEXT("EnemyBullet"));
 }
 
 // Called when the game starts or when spawned
 void AEnemyBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	capsComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemyBullet::OnBulletOverlap);
 
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
@@ -42,14 +40,13 @@ void AEnemyBullet::BeginPlay()
 void AEnemyBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	this->FireBullet(DeltaTime);
 }
 
 // Damage Event
 void AEnemyBullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	if (player != nullptr && player == Cast<APawn>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, damage, nullptr, this, nullptr);
@@ -69,4 +66,14 @@ void AEnemyBullet::FireBullet(float DeltaTime)
 
 	FVector newLocation = this->GetActorLocation() + dir * attackSpeed * DeltaTime;
 	SetActorLocation(newLocation);
+}
+
+void AEnemyBullet::RadialBullet(float DeltaTime)
+{
+	FVector nowLoc = player->GetActorLocation();
+
+	TArray<FVector> radialBul;
+
+	radialBul.Emplace(this->GetActorForwardVector());
+	
 }

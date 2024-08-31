@@ -19,12 +19,16 @@ AZakoEnemy::AZakoEnemy()
 	SetRootComponent(capsComp);
 
 	//ÀÚ½Ä ½ºÄÌ·¹Å» ¸Þ½Ã ÄÄÆ÷³ÍÆ®
-	skelMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh Component"));
+	skelMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
 	skelMeshComp->SetupAttachment(capsComp);
-
+	
 	//Åº¸· Arrow ÄÄÆ÷³ÍÆ®
 	firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Component"));
-	firePosition->SetupAttachment(skelMeshComp);
+	firePosition->SetupAttachment(capsComp);
+
+	firePosition->SetRelativeLocation(FVector(50.0f, 0.0f, 0.0f));
+
+	capsComp->SetCollisionProfileName(TEXT("Enemy"));
 }
 
 // Called when the game starts or when spawned
@@ -38,14 +42,14 @@ void AZakoEnemy::BeginPlay()
 		player = PlayerController->GetPawn();
 	}
 
-	direction = player->GetActorLocation() - this->GetActorLocation();
-	direction.Normalize();
+	if (player != nullptr)
+	{
+		direction = player->GetActorLocation() - this->GetActorLocation();
+		direction.Normalize();
 
-	capsComp->OnComponentBeginOverlap.AddDynamic(this, &AZakoEnemy::OnBulletOverlap);
-
-	capsComp->SetGenerateOverlapEvents(true);
-	capsComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	capsComp->SetCollisionProfileName(TEXT("OverlapAll"));
+		capsComp->OnComponentBeginOverlap.AddDynamic(this, &AZakoEnemy::OnBulletOverlap);
+	}
+	
 }
 
 // Called every frame
@@ -53,14 +57,17 @@ void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (isFire) 
+	if (player != nullptr && IsValid(player))
 	{
-		this->attackPlayer(DeltaTime);
-	}
+		if (isFire)
+		{
+			this->attackPlayer(DeltaTime);
+		}
 
-	if (isTrace) 
-	{
-		this->tracePlayer(DeltaTime);
+		if (isTrace)
+		{
+			this->tracePlayer(DeltaTime);
+		}
 	}
 	
 }
@@ -73,14 +80,15 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 	{
 		currentTime = 0;
 		AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(bullet, GetActorLocation(), GetActorRotation());
-	} else
+	} 
+	else
 	{
 		currentTime += DeltaTime;
 	}
 }
 
 
-void AZakoEnemy::hit(int Damage)
+void AZakoEnemy::hit(float Damage)
 {
 	health -= Damage;
 
@@ -129,15 +137,33 @@ void AZakoEnemy::rotatePlayer(float DeltaTime)
 	}
 }
 
+/*
+float AZakoEnemy::takeDmg(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float dmg = SuperTakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp, Warning, TEXT("%.2f"), dmg);
+	hit(dmg);
+	
+	return dmg;
+}*/
+
+float AZakoEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float HitDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// Ã¼·Â °ü¸®
+	hit(HitDamage);
+
+	return HitDamage;
+}
+
 
 // Damage Event
 void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	if (player != nullptr && player == Cast<APawn>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, 50, nullptr, this, nullptr);
 		this->Destroy();
 	}
-
 }
