@@ -67,13 +67,11 @@ void AFighterPlayer::FireK()
 
 void AFighterPlayer::FireL()
 {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.bNoFail = true;
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
 	AHeolikeinBullet* bullet = GetWorld()->SpawnActor<AHeolikeinBullet>(KeinBullet,
 		firePosition->GetComponentLocation(),
-		firePosition->GetComponentRotation());
-
-	if (bullet != nullptr)
-	{
-		// 지속 데미지 적용
-	}
+		firePosition->GetComponentRotation(),
+		SpawnParams);
 }

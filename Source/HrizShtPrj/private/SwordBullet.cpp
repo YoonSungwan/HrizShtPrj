@@ -10,7 +10,7 @@ ASwordBullet::ASwordBullet()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SwordComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PunchCollision"));
+	SwordComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Sword Collision"));
 	SwordComp->SetupAttachment(capsuleComp);
 
 	SwordComp->SetCollisionProfileName(TEXT("SwordBullet"));

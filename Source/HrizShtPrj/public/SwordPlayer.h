@@ -32,6 +32,8 @@ public:
 	void FireLRepeated();
 	void FireLRepeated_Helper();
 
+
+
 private:
 	FTimerHandle FireTimerHandle;  // 타이머를 관리하기 위한 핸들
 	int32 FireCount;  // 발사 횟수를 추적하기 위한 변수

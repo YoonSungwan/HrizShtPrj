@@ -5,7 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/ArrowComponent.h"
-#include "PlayerBullet.h"
+#include "SwordBullet.h"
 
 void ASwordPlayer::BeginPlay()
 {
@@ -30,7 +30,7 @@ void ASwordPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 void ASwordPlayer::FireJ()
 {
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
-	APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory,
+	ASwordBullet* bullet = GetWorld()->SpawnActor<ASwordBullet>(bulletFactory,
 		firePosition->GetComponentLocation(),
 		firePosition->GetComponentRotation());
 }
@@ -91,7 +91,7 @@ void ASwordPlayer::FireL()
 			FRotator SpawnRotation = Direction.Rotation();  // 방향에 따른 회전 설정
 
 			// PlayerBullet 클래스의 인스턴스를 생성
-			APlayerBullet* Bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, SpawnLocation, SpawnRotation, SpawnParams);
+			ASwordBullet* Bullet = GetWorld()->SpawnActor<ASwordBullet>(bulletFactory, SpawnLocation, SpawnRotation, SpawnParams);
 			if (Bullet)
 			{
 				Bullet->BulletDamage = 100.f;
