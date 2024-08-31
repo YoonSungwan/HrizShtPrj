@@ -41,7 +41,7 @@ public:
 	// mesh ÄÄÆ÷³ÍÆ®
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* meshComp;
-	
+
 	UPROPERTY(EditAnywhere)
 	class UArrowComponent* firePosition;
 

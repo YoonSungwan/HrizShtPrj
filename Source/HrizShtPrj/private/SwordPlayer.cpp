@@ -50,6 +50,7 @@ void ASwordPlayer::FireK()
 		{
 			// PlayerBullet 인스턴스 생성
 			FActorSpawnParameters SpawnParams;
+			SpawnParams.bNoFail = true;
 			FVector SpawnLocation = firePosition->GetComponentLocation();
 			FRotator SpawnRotation = Direction.Rotation();  // 방향에 따른 회전 설정
 
@@ -87,6 +88,7 @@ void ASwordPlayer::FireL()
 		{
 			// PlayerBullet 인스턴스 생성
 			FActorSpawnParameters SpawnParams;
+			SpawnParams.bNoFail = true;
 			FVector SpawnLocation = firePosition->GetComponentLocation();
 			FRotator SpawnRotation = Direction.Rotation();  // 방향에 따른 회전 설정
 
