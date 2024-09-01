@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/TimelineComponent.h"
 #include "ZakoEnemy.generated.h"
 
 UCLASS()
@@ -44,6 +45,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Pattern")
 	bool isTrace = false;
+	
+	UPROPERTY(EditAnywhere, Category="Movement")
+	class UCurveVector* MovementCurve;
 
 	UFUNCTION()
 	void OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -51,6 +55,8 @@ public:
 		bool bFromSweep, const FHitResult& SweepResult);
 
 	APawn* player;
+	
+	FTimeline MovementTimeline;
 	
 	void attackPlayer(float DeltaTime);
 	void hit(float Damage);
@@ -61,7 +67,12 @@ public:
 	void escapeMap(FVector escapeDir, float DeltaTime);
 	void rotatePlayer(float DeltaTime);
 
-	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	UFUNCTION()
+	void HandleMovementProgress(FVector value);
+	void SetupTimeline();
+	void OnPlayerReachedEdge();
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 protected:
 	// Called when the game starts or when spawned

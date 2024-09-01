@@ -5,7 +5,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "ZakoEnemy.h"
 
 // Sets default values
 AEnemyBullet::AEnemyBullet()
@@ -34,6 +33,7 @@ void AEnemyBullet::BeginPlay()
 	{
 		player = PlayerController->GetPawn();
 	}
+	
 }
 
 // Called every frame
@@ -50,8 +50,8 @@ void AEnemyBullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	if (player != nullptr && player == Cast<APawn>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, damage, nullptr, this, nullptr);
-		this->Destroy();
 	}
+	this->Destroy();
 }
 
 // Fire Event
