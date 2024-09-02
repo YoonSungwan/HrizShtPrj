@@ -2,7 +2,7 @@
 
 
 #include "EnemyFactory.h"
-
+#include "Math/UnrealMathUtility.h"
 #include "ZakoEnemy.h"
 
 // Sets default values
@@ -17,27 +17,52 @@ AEnemyFactory::AEnemyFactory()
 void AEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SpawnLoc = GetActorLocation();
+	spawnInterval = (enemyMaxSpawn * enemySpawnDelay) + SpawnerDelay;
+	GetWorldTimerManager().SetTimer(Timer, this, &AEnemyFactory::setEnemySpawner, spawnInterval, true);
 }
 
 // Called every frame
 void AEnemyFactory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if(currentTime > spawnDelay)
+	
+	if(currentTime > enemySpawnDelay)
 	{
-		currentTime = 0;
-		AZakoEnemy* spawnE = GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
-		spawnCount++;
+		if(enemyMaxSpawn > enemySpawnCount)
+		{
+			currentTime = 0;
+			AZakoEnemy* spawnE = GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
+			enemySpawnCount++;
+		}
+
 	}
 	else
 	{
 		currentTime += DeltaTime;	
 	}
+	
+}
 
-	if (maxSpawn <= spawnCount)
+void AEnemyFactory::setEnemySpawner()
+{
+	if(timerCnt >= DestroySpawnerCnt)
 	{
-		this->Destroy();
+		this->destroySpawner();
 	}
+	
+	enemySpawnCount = 0;
+	currentTime = 0;
 
+	randomY = FMath::RoundToFloat(FMath::RandRange(-2.0f, 2.0f)) * 100;
+	SetActorLocation(FVector(SpawnLoc.X, SpawnLoc.Y+randomY, SpawnLoc.Z));
+
+	timerCnt++;
+}
+
+void AEnemyFactory::destroySpawner()
+{
+	GetWorldTimerManager().ClearTimer(Timer);
+	this->Destroy();
 }

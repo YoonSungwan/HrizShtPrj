@@ -23,18 +23,36 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "OptionInit")
+	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
 	TSubclassOf<class AZakoEnemy> enemy;
+	
+	float spawnInterval = 10.0f;
+	
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	int32 DestroySpawnerCnt = 5;
 
-	int32 spawnCount = 0;
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	int32 SpawnerDelay = 10;
 
-	UPROPERTY(EditAnywhere, Category = "OptionInit")
-	int32 maxSpawn = 3;
+	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
+	int32 enemyMaxSpawn = 5;
 
-	UPROPERTY(EditAnywhere, Category="OptionInit")
-	float spawnDelay = 5.0f;
+	UPROPERTY(EditAnywhere, Category="EnemySpawn")
+	float enemySpawnDelay = 1.0f;
 
+	UFUNCTION()
+	void setEnemySpawner();
+	UFUNCTION()
+	void destroySpawner();
+
+	FVector SpawnLoc;
+	
 private:
 	float currentTime = 0;
+	float randomY;
 
+	FTimerHandle Timer;
+
+	int32 timerCnt = 0;
+	int32 enemySpawnCount = 0;
 };

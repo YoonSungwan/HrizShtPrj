@@ -46,8 +46,6 @@ public:
 
 	void FireBullet(float DeltaTime);
 
-	void RadialBullet(float DeltaTime);
-
 private :
 	APawn* player;
 

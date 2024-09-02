@@ -36,6 +36,8 @@ void AZakoEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitLoc = this->GetActorLocation();
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
@@ -50,6 +52,26 @@ void AZakoEnemy::BeginPlay()
 		capsComp->OnComponentBeginOverlap.AddDynamic(this, &AZakoEnemy::OnBulletOverlap);
 	}
 	
+	if(!isTrace)
+	{
+		SetupTimeline();
+		MovementTimeline.PlayFromStart();
+	}
+
+	if (IsValid(RadialBullet))
+	{
+		GetWorldTimerManager().SetTimer(Timer, this, &AZakoEnemy::radialPtrn, 8.0f, true);
+	}
+
+	
+	GetWorldTimerManager().SetTimer(timer, this, &AZakoEnemy::startEscape, escapeCnt, false);
+
+}
+
+void AZakoEnemy::OnPlayerReachedEdge()
+{
+	// 플레이어가 화면 끝에 도달했을 때 실행할 로직
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Player has reached the edge of the screen!"));
 }
 
 // Called every frame
@@ -57,6 +79,12 @@ void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (isEscape)
+	{
+		this->escapeMap(DeltaTime);
+		return;
+	}
+	
 	if (player != nullptr && IsValid(player))
 	{
 		if (isFire)
@@ -67,6 +95,10 @@ void AZakoEnemy::Tick(float DeltaTime)
 		if (isTrace)
 		{
 			this->tracePlayer(DeltaTime);
+		}
+		else
+		{
+			MovementTimeline.TickTimeline(DeltaTime);
 		}
 	}
 	
@@ -79,7 +111,10 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 	if (currentTime > attackDelay)
 	{
 		currentTime = 0;
-		AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(bullet, GetActorLocation(), GetActorRotation());
+		if (IsValid(normalBullet))
+		{
+			AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(normalBullet, firePosition->GetComponentLocation(), firePosition->GetComponentRotation());
+		}
 	} 
 	else
 	{
@@ -93,7 +128,7 @@ void AZakoEnemy::hit(float Damage)
 	health -= Damage;
 
 	if (health <= 0) {
-		AZakoEnemy::death();
+		this->death();
 	}
 }
 
@@ -103,25 +138,13 @@ void AZakoEnemy::death()
 		return;
 	}
 
-	AZakoEnemy::Destroy();
+	this->Destroy();
 }
 
 
 void AZakoEnemy::tracePlayer(float DeltaTime)
 {
 	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
-}
-
-
-void AZakoEnemy::moving(FVector pointPos, float DeltaTime)
-{
-	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
-}
-
-
-void AZakoEnemy::escapeMap(FVector escapeDir, float DeltaTime)
-{
-	SetActorLocation(this->GetActorLocation() + escapeDir * DeltaTime * moveSpd);
 }
 
 
@@ -137,26 +160,16 @@ void AZakoEnemy::rotatePlayer(float DeltaTime)
 	}
 }
 
-/*
-float AZakoEnemy::takeDmg(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	float dmg = SuperTakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	UE_LOG(LogTemp, Warning, TEXT("%.2f"), dmg);
-	hit(dmg);
-	
-	return dmg;
-}*/
 
 float AZakoEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float HitDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float dmg = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	// 체력 관리
-	hit(HitDamage);
+	hit(dmg);
 
-	return HitDamage;
+	return dmg;
 }
-
 
 // Damage Event
 void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -164,6 +177,64 @@ void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (player != nullptr && player == Cast<APawn>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, 50, nullptr, this, nullptr);
-		this->Destroy();
 	}
+
+	this->Destroy();
+}
+
+void AZakoEnemy::HandleMovementProgress(FVector Value)
+{
+	FVector StartLocation = InitLoc;
+	FVector EndLocation = FVector(StartLocation.X, InitLoc.Y - 500, direction.Z);
+	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Value.Y);
+	SetActorLocation(NewLocation);
+}
+
+void AZakoEnemy::startEscape()
+{
+	isEscape = true;
+}
+
+void AZakoEnemy::escapeMap(float DeltaTime)
+{
+	FVector nowLocation = GetActorLocation();
+	nowLocation.Z = GetActorLocation().Z + moveSpd * DeltaTime;
+	SetActorLocation(nowLocation);
+}
+
+
+void AZakoEnemy::SetupTimeline()
+{
+	if (MovementCurve)
+	{
+		TimelineCallback.BindUFunction(this, FName("HandleMovementProgress"));
+		MovementTimeline.AddInterpVector(MovementCurve, TimelineCallback);
+		MovementTimeline.SetLooping(false);
+	}
+}
+
+void AZakoEnemy::radialPtrn()
+{
+	for (int i = 0; i < RadialCount - 1; i++) {
+		FRotator BulletRot = GetActorRotation();
+		FRotator BulletRotMin = GetActorRotation();
+
+		for (int j = 0; j < 2; j++)
+		{
+			if (j == 0)
+			{
+				BulletRot.Pitch += i * 18.0f;
+				FVector Dir = BulletRot.Vector();
+				AEnemyBullet* Bullet = GetWorld()->SpawnActor<AEnemyBullet>(RadialBullet, firePosition->GetComponentLocation(), BulletRot);
+			}
+			else
+			{
+				BulletRotMin.Pitch += i * -18.0f;
+				FVector Dir = BulletRotMin.Vector();
+				AEnemyBullet* Bullet = GetWorld()->SpawnActor<AEnemyBullet>(RadialBullet, firePosition->GetComponentLocation(), BulletRotMin);
+			}
+
+		}
+	}
+	
 }
