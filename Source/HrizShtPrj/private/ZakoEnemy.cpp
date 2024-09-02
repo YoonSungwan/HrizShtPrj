@@ -36,6 +36,8 @@ void AZakoEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitLoc = this->GetActorLocation();
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
@@ -53,42 +55,17 @@ void AZakoEnemy::BeginPlay()
 	if(!isTrace)
 	{
 		SetupTimeline();
-
-		if (MovementCurve)
-		{
-			MovementTimeline.PlayFromStart();
-		}	
+		MovementTimeline.PlayFromStart();
 	}
-	/*
-	FVector2D viewportSize;
-	GEngine->GameViewport->GetViewportSize(viewportSize);
-	
-	FVector2D ScreenLocation;
-	PlayerController->ProjectWorldLocationToScreen(GetPawn()->GetActorLocation(), ScreenLocation);
 
-	FVector WorldLocation, WorldDirection;
-	PlayerController->DeprojectScreenPositionToWorld(0.0f, 0.0f, WorldLocation, WorldDirection);
-
-	// 좌상단, 우하단의 월드 좌표 계산
-	FVector TopLeftWorldLocation, TopLeftWorldDirection;
-	PlayerController->DeprojectScreenPositionToWorld(0.0f, 0.0f, TopLeftWorldLocation, TopLeftWorldDirection);
-
-	FVector BottomRightWorldLocation, BottomRightWorldDirection;
-	PlayerController->DeprojectScreenPositionToWorld(ViewportSize.X, ViewportSize.Y, BottomRightWorldLocation, BottomRightWorldDirection);
-
-	// 플레이어의 현재 위치를 기준으로 화면 경계 체크
-	FVector PlayerLocation = GetPawn()->GetActorLocation();
-
-	bool bIsOutsideLeft = PlayerLocation.X < TopLeftWorldLocation.X;
-	bool bIsOutsideRight = PlayerLocation.X > BottomRightWorldLocation.X;
-	bool bIsOutsideTop = PlayerLocation.Y > TopLeftWorldLocation.Y;
-	bool bIsOutsideBottom = PlayerLocation.Y < BottomRightWorldLocation.Y;
-
-	if (bIsOutsideLeft || bIsOutsideRight || bIsOutsideTop || bIsOutsideBottom)
+	if (IsValid(RadialBullet))
 	{
-		// 이벤트 발생
-		OnPlayerReachedEdge();
-	}*/
+		GetWorldTimerManager().SetTimer(Timer, this, &AZakoEnemy::radialPtrn, 8.0f, true);
+	}
+
+	
+	GetWorldTimerManager().SetTimer(timer, this, &AZakoEnemy::startEscape, escapeCnt, false);
+
 }
 
 void AZakoEnemy::OnPlayerReachedEdge()
@@ -101,9 +78,13 @@ void AZakoEnemy::OnPlayerReachedEdge()
 void AZakoEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	
 
+	if (isEscape)
+	{
+		this->escapeMap(DeltaTime);
+		return;
+	}
+	
 	if (player != nullptr && IsValid(player))
 	{
 		if (isFire)
@@ -130,7 +111,10 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 	if (currentTime > attackDelay)
 	{
 		currentTime = 0;
-		AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(bullet, GetActorLocation(), GetActorRotation());
+		if (IsValid(normalBullet))
+		{
+			AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(normalBullet, firePosition->GetComponentLocation(), firePosition->GetComponentRotation());
+		}
 	} 
 	else
 	{
@@ -161,18 +145,6 @@ void AZakoEnemy::death()
 void AZakoEnemy::tracePlayer(float DeltaTime)
 {
 	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
-}
-
-
-void AZakoEnemy::moving(FVector pointPos, float DeltaTime)
-{
-	this->SetActorLocation(this->GetActorLocation() + (direction * DeltaTime * moveSpd));
-}
-
-
-void AZakoEnemy::escapeMap(FVector escapeDir, float DeltaTime)
-{
-	SetActorLocation(this->GetActorLocation() + escapeDir * DeltaTime * moveSpd);
 }
 
 
@@ -212,20 +184,57 @@ void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 
 void AZakoEnemy::HandleMovementProgress(FVector Value)
 {
-	FVector StartLocation = GetActorLocation();
-	FVector EndLocation = FVector(0,330,50);
+	FVector StartLocation = InitLoc;
+	FVector EndLocation = FVector(StartLocation.X, InitLoc.Y - 500, direction.Z);
 	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Value.Y);
 	SetActorLocation(NewLocation);
 }
+
+void AZakoEnemy::startEscape()
+{
+	isEscape = true;
+}
+
+void AZakoEnemy::escapeMap(float DeltaTime)
+{
+	FVector nowLocation = GetActorLocation();
+	nowLocation.Z = GetActorLocation().Z + moveSpd * DeltaTime;
+	SetActorLocation(nowLocation);
+}
+
 
 void AZakoEnemy::SetupTimeline()
 {
 	if (MovementCurve)
 	{
-		FOnTimelineVector TimelineCallback;
 		TimelineCallback.BindUFunction(this, FName("HandleMovementProgress"));
 		MovementTimeline.AddInterpVector(MovementCurve, TimelineCallback);
 		MovementTimeline.SetLooping(false);
-		
 	}
+}
+
+void AZakoEnemy::radialPtrn()
+{
+	for (int i = 0; i < RadialCount - 1; i++) {
+		FRotator BulletRot = GetActorRotation();
+		FRotator BulletRotMin = GetActorRotation();
+
+		for (int j = 0; j < 2; j++)
+		{
+			if (j == 0)
+			{
+				BulletRot.Pitch += i * 18.0f;
+				FVector Dir = BulletRot.Vector();
+				AEnemyBullet* Bullet = GetWorld()->SpawnActor<AEnemyBullet>(RadialBullet, firePosition->GetComponentLocation(), BulletRot);
+			}
+			else
+			{
+				BulletRotMin.Pitch += i * -18.0f;
+				FVector Dir = BulletRotMin.Vector();
+				AEnemyBullet* Bullet = GetWorld()->SpawnActor<AEnemyBullet>(RadialBullet, firePosition->GetComponentLocation(), BulletRotMin);
+			}
+
+		}
+	}
+	
 }

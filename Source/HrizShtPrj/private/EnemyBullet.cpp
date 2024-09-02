@@ -67,13 +67,3 @@ void AEnemyBullet::FireBullet(float DeltaTime)
 	FVector newLocation = this->GetActorLocation() + dir * attackSpeed * DeltaTime;
 	SetActorLocation(newLocation);
 }
-
-void AEnemyBullet::RadialBullet(float DeltaTime)
-{
-	FVector nowLoc = player->GetActorLocation();
-
-	TArray<FVector> radialBul;
-
-	radialBul.Emplace(this->GetActorForwardVector());
-	
-}
