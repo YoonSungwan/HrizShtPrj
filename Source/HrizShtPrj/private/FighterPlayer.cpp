@@ -33,7 +33,7 @@ void AFighterPlayer::FireJ()
 
 void AFighterPlayer::FireK()
 {
-
+	Super::FireK();
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정
@@ -67,6 +67,7 @@ void AFighterPlayer::FireK()
 
 void AFighterPlayer::FireL()
 {
+	Super::FireL();
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.bNoFail = true;
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.

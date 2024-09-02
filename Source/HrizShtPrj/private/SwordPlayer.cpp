@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/ArrowComponent.h"
 #include "SwordBullet.h"
+#include "PlayerBullet.h"
 
 void ASwordPlayer::BeginPlay()
 {
@@ -20,23 +21,22 @@ void ASwordPlayer::Tick(float DeltaTime)
 void ASwordPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* enhancedInputComponent =
-		Cast<UEnhancedInputComponent>(PlayerInputComponent);
-
-	enhancedInputComponent->BindAction(IA_LSkill, ETriggerEvent::Started, this, &ASwordPlayer::FireLRepeated);
 }
 
 void ASwordPlayer::FireJ()
 {
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
-	ASwordBullet* bullet = GetWorld()->SpawnActor<ASwordBullet>(bulletFactory,
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.bNoFail = true;
+	APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory,
 		firePosition->GetComponentLocation(),
-		firePosition->GetComponentRotation());
+		firePosition->GetComponentRotation(),
+		SpawnParams);
 }
 
 void ASwordPlayer::FireK()
 {
+	Super::FireK();
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정
@@ -69,7 +69,7 @@ void ASwordPlayer::FireK()
 
 void ASwordPlayer::FireL()
 {
-
+	Super::FireL();
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정
@@ -93,7 +93,7 @@ void ASwordPlayer::FireL()
 			FRotator SpawnRotation = Direction.Rotation();  // 방향에 따른 회전 설정
 
 			// PlayerBullet 클래스의 인스턴스를 생성
-			ASwordBullet* Bullet = GetWorld()->SpawnActor<ASwordBullet>(bulletFactory, SpawnLocation, SpawnRotation, SpawnParams);
+			APlayerBullet* Bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, SpawnLocation, SpawnRotation, SpawnParams);
 			if (Bullet)
 			{
 				Bullet->BulletDamage = 100.f;
@@ -101,6 +101,14 @@ void ASwordPlayer::FireL()
 				Bullet->ShootSkill(GetWorld()->DeltaTimeSeconds);
 			}
 		}
+	}
+}
+
+void ASwordPlayer::TryFireL()
+{
+	if (bcanFireL && LSkillCooldown <= 0.0f)
+	{
+		FireLRepeated(); // FireLRepeated는 L 스킬의 재발사 로직을 포함함
 	}
 }
 

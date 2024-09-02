@@ -31,6 +31,7 @@ public:
 
 	void HandleHealth(float DamageAmount);
 	void HandleLives();
+	void SetHUD(class UPlayerHUD* hud);
 
 public:
 
@@ -83,7 +84,28 @@ protected:
 	virtual void FireJ();
 	virtual void FireK();
 	virtual void FireL();
+
+	virtual void TryFireK();
+	virtual void TryFireL();
+
+	void UpdateSkillCooldown(float DeltaTime);
+
+protected:
+	float KSkillCooldown = 0.f;
+	float LSkillCooldown = 0.f;
+	float KSkillMaxCooldown = 7.f;
+	float LSkillMaxCooldown = 30.f;
+
+	bool bcanFireK = true;
+	bool bcanFireL = true;
+
+public:
+	inline float GetKSkillCooldownRatio() const { return KSkillCooldown / KSkillMaxCooldown; }
+	inline float GetLSkillCooldownRatio() const { return LSkillCooldown / LSkillMaxCooldown; }
+
 private:
 	float _h;
 	float _v;
+
+	class UPlayerHUD* playerHUD;	// HUD 참조 추가
 };

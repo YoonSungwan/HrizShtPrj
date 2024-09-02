@@ -29,6 +29,8 @@ public:
 	virtual void FireK() override;
 	virtual void FireL() override;
 
+	virtual void TryFireL() override;
+
 	void FireLRepeated();
 	void FireLRepeated_Helper();
 
