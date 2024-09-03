@@ -45,7 +45,7 @@ public:
 	class UProgressBar* LSkillCooldownBar;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* stopWatchText;
+	class UTextBlock* stopWatchText = nullptr;
 	
 	
 	void UpdateHealth(int32 Lives);

@@ -43,11 +43,10 @@ void UPlayerHUD::UpdateStopWatch(float Time)
 	{
 		int32 Minutes = FMath::FloorToInt(Time / 60.0f);
 		int32 Seconds = FMath::FloorToInt(Time) % 60;
-		stopWatchText->SetText(FText::Format(
-			NSLOCTEXT("Stopwatch", "Format", "{0:D2}:{1:D2}"),
-			Minutes,
-			Seconds
-		));
+
+		// FString::Printf로 숫자를 2자리로 포맷
+		FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+		stopWatchText->SetText(FText::FromString(TimeString));
 	}
 }
 
