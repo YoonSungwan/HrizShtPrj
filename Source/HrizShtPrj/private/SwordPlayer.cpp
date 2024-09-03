@@ -56,7 +56,7 @@ void ASwordPlayer::FireK()
 
 			// PlayerBullet 클래스의 인스턴스를 생성
 			APlayerBullet* Bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, SpawnLocation, SpawnRotation);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *SpawnLocation.ToString());
+			// UE_LOG(LogTemp, Warning, TEXT("%s"), *SpawnLocation.ToString());
 			if (Bullet)
 			{
 				Bullet->BulletDamage = 35.f;
