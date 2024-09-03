@@ -9,7 +9,7 @@
 AKillZone1::AKillZone1()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// PrimaryActorTick.bCanEverTick = true;
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("KillZone1"));
 	SetRootComponent(boxComp);
