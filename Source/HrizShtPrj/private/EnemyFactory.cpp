@@ -2,6 +2,8 @@
 
 
 #include "EnemyFactory.h"
+
+#include "ParticleHelper.h"
 #include "Math/UnrealMathUtility.h"
 #include "ZakoEnemy.h"
 
@@ -10,7 +12,7 @@ AEnemyFactory::AEnemyFactory()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 // Called when the game starts or when spawned
@@ -18,51 +20,94 @@ void AEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnLoc = GetActorLocation();
-	spawnInterval = (enemyMaxSpawn * enemySpawnDelay) + SpawnerDelay;
-	GetWorldTimerManager().SetTimer(Timer, this, &AEnemyFactory::setEnemySpawner, spawnInterval, true);
+	initializeValue();
+	
+	GetWorldTimerManager().SetTimer(tickHandle, this, &AEnemyFactory::startSpawn, startDelay, false);
+
+	//factory 자체 쿨타임
+	GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, spawnInterval, true);
+	GetWorldTimerManager().UnPauseTimer(factoryHandle);
 }
 
 // Called every frame
 void AEnemyFactory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	if(currentTime > enemySpawnDelay)
-	{
-		if(enemyMaxSpawn > enemySpawnCount)
-		{
-			currentTime = 0;
-			AZakoEnemy* spawnE = GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
-			enemySpawnCount++;
-		}
 
-	}
-	else
+	if(currentCnt >= enemyMaxSpawn)
 	{
-		currentTime += DeltaTime;	
+		if(!GetWorldTimerManager().IsTimerActive(factoryHandle))
+		{
+			GetWorldTimerManager().UnPauseTimer(factoryHandle);	
+		}
+		return;
+	}
+
+	if(IsValid(enemy))
+	{
+		if(currnetTime >= enemySpawnDelay)
+		{
+			APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+			if (PlayerController && PlayerController->GetPawn())
+			{
+				GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
+				currnetTime = 0;
+				currentCnt++;
+			}
+	
+		}
+		else
+		{
+			currnetTime += DeltaTime;
+		}
 	}
 	
 }
 
+
+void AEnemyFactory::initializeValue()
+{
+	FVector initLoc = GetActorLocation();
+	for (int i = 0; i < 3; i++)
+	{
+		if(spawnHriz)
+		{
+			initLoc.Y = initLoc.Y + spawnRange.Y * i;
+		}
+
+		if(spawnVrtc)
+		{
+			initLoc.Z = initLoc.Z + spawnRange.Z * i;
+		}
+		spawnLocArr.Add(initLoc);
+	}
+	
+	int32 SpawnerDelay = FMath::RandRange(3, factoryDelayRange);
+	spawnInterval = (enemyMaxSpawn * enemySpawnDelay) + SpawnerDelay;
+}
+
+
+void AEnemyFactory::startSpawn()
+{
+	SetActorTickEnabled(true);
+}
+
+
 void AEnemyFactory::setEnemySpawner()
 {
-	if(timerCnt >= DestroySpawnerCnt)
+	if(timerCnt >= DestroyFactoryCnt)
 	{
 		this->destroySpawner();
 	}
+	int32 arrIdx = FMath::RandRange(0, spawnLocArr.Num() - 1);
+	SetActorLocation(spawnLocArr[arrIdx]);
 	
-	enemySpawnCount = 0;
-	currentTime = 0;
-
-	randomY = FMath::RoundToFloat(FMath::RandRange(-2.0f, 2.0f)) * 100;
-	SetActorLocation(FVector(SpawnLoc.X, SpawnLoc.Y+randomY, SpawnLoc.Z));
-
 	timerCnt++;
+	currentCnt = 0;
 }
 
 void AEnemyFactory::destroySpawner()
 {
-	GetWorldTimerManager().ClearTimer(Timer);
+	GetWorldTimerManager().ClearTimer(factoryHandle);
 	this->Destroy();
 }

@@ -25,34 +25,47 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
 	TSubclassOf<class AZakoEnemy> enemy;
-	
-	float spawnInterval = 10.0f;
-	
-	UPROPERTY(EditAnywhere, Category="SpawnerOption")
-	int32 DestroySpawnerCnt = 5;
-
-	UPROPERTY(EditAnywhere, Category="SpawnerOption")
-	int32 SpawnerDelay = 10;
 
 	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
-	int32 enemyMaxSpawn = 5;
+	FVector spawnRange = FVector(50,0,50);
 
 	UPROPERTY(EditAnywhere, Category="EnemySpawn")
 	float enemySpawnDelay = 1.0f;
 
-	UFUNCTION()
-	void setEnemySpawner();
-	UFUNCTION()
-	void destroySpawner();
+	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
+	int32 enemyMaxSpawn = 5;
 
-	FVector SpawnLoc;
+	TArray<FVector> spawnLocArr;
+	
+	float spawnInterval = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	float startDelay = 5.0f;
+	
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	int32 DestroyFactoryCnt = 5;
+
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	int32 factoryDelayRange = 10;
+
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	bool spawnHriz = false;
+
+	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	bool spawnVrtc = true;
+	
+	void setEnemySpawner();
+	void destroySpawner();
+	void startSpawn();
 	
 private:
-	float currentTime = 0;
-	float randomY;
-
-	FTimerHandle Timer;
-
 	int32 timerCnt = 0;
-	int32 enemySpawnCount = 0;
+	
+	FTimerHandle tickHandle;
+	FTimerHandle factoryHandle;
+
+	int32 currentCnt = 0;
+	float currnetTime = 0;
+	
+	void initializeValue();
 };

@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AEnemyBullet::AEnemyBullet()
@@ -59,9 +60,10 @@ void AEnemyBullet::FireBullet(float DeltaTime)
 {
 	FVector dir = this->GetActorForwardVector();
 
-	if (isTrace)
+	if (isTrace && IsValid(player))
 	{
 		dir = player->GetActorLocation();
+		dir.Normalize();
 	}
 
 	FVector newLocation = this->GetActorLocation() + dir * attackSpeed * DeltaTime;

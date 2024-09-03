@@ -19,7 +19,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	//ÃÊ±â »óÅÂ
+	//ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "OptionInit")
 	class UCapsuleComponent* capsComp;
 
@@ -33,15 +33,12 @@ public:
 	int32 health = 100;
 
 	UPROPERTY(EditAnywhere, Category="OptionInit")
-	float attackDelay = 3;
-
-	UPROPERTY(EditAnywhere, Category="OptionInit")
 	float moveSpd = 500;
 
 	UPROPERTY(EditAnywhere, Category = "OptionInit")
 	float escapeCnt = 10.0f;
 
-	//±âº» ÆÐÅÏ
+	//ï¿½âº» ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "Pattern")
 	bool isFire = false;
 
@@ -49,15 +46,24 @@ public:
 	bool isTrace = false;
 
 
-	//ÃÑ¾Ë ¼¼ÆÃ
+	//ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> normalBullet;
 
+	UPROPERTY(EditAnywhere, Category="BulletSettings")
+	float normalAttackDelay = 3.0f;
+
 	UPROPERTY(EditAnywhere, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> TraceBullet;
+	
+	UPROPERTY(EditAnywhere, Category = "BulletSettings")
+	float traceAttackDelay = 5.0f;
 
 	UPROPERTY(EditAnywhere, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> RadialBullet;
+
+	UPROPERTY(EditAnywhere, Category = "BulletSettings")
+	float RadialAttackDelay = 3.0f;
 
 	UPROPERTY(EditAnywhere, Category = "BulletSettings")
 	int32 RadialCount = 5;
@@ -85,16 +91,14 @@ public:
 	void startEscape();
 	void escapeMap(float DeltaTime);
 
-	UFUNCTION()
+	void tracePtrn();
 	void radialPtrn();
 
 	UFUNCTION()
 	void HandleMovementProgress(FVector value);
 	void SetupTimeline();
-	void OnPlayerReachedEdge();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	FTimerHandle Timer;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -106,5 +110,7 @@ private:
 	FVector direction;
 	FVector InitLoc;
 	
+	FTimerHandle radBulHandle;
+	FTimerHandle trcBulHandle;
 	FTimerHandle timer;
 };

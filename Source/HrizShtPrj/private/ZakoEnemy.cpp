@@ -52,27 +52,29 @@ void AZakoEnemy::BeginPlay()
 		capsComp->OnComponentBeginOverlap.AddDynamic(this, &AZakoEnemy::OnBulletOverlap);
 	}
 	
+	//등장 curve 
 	if(!isTrace)
 	{
 		SetupTimeline();
 		MovementTimeline.PlayFromStart();
 	}
 
-	if (IsValid(RadialBullet))
+	//유도 공격
+	if (IsValid(TraceBullet))
 	{
-		GetWorldTimerManager().SetTimer(Timer, this, &AZakoEnemy::radialPtrn, 8.0f, true);
+		GetWorldTimerManager().SetTimer(trcBulHandle, this, &AZakoEnemy::tracePtrn, traceAttackDelay, true);
 	}
 
-	
+	//방사형 공격
+	if (IsValid(RadialBullet))
+	{
+		GetWorldTimerManager().SetTimer(radBulHandle, this, &AZakoEnemy::radialPtrn, RadialAttackDelay, true);
+	}
+
 	GetWorldTimerManager().SetTimer(timer, this, &AZakoEnemy::startEscape, escapeCnt, false);
 
 }
 
-void AZakoEnemy::OnPlayerReachedEdge()
-{
-	// 플레이어가 화면 끝에 도달했을 때 실행할 로직
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Player has reached the edge of the screen!"));
-}
 
 // Called every frame
 void AZakoEnemy::Tick(float DeltaTime)
@@ -96,7 +98,7 @@ void AZakoEnemy::Tick(float DeltaTime)
 		{
 			this->tracePlayer(DeltaTime);
 		}
-		else
+		else if(MovementCurve != nullptr)
 		{
 			MovementTimeline.TickTimeline(DeltaTime);
 		}
@@ -108,12 +110,12 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 {
 	this->rotatePlayer(DeltaTime);
 
-	if (currentTime > attackDelay)
+	if (currentTime > normalAttackDelay)
 	{
 		currentTime = 0;
 		if (IsValid(normalBullet))
 		{
-			AEnemyBullet* spawnBullet = GetWorld()->SpawnActor<AEnemyBullet>(normalBullet, firePosition->GetComponentLocation(), firePosition->GetComponentRotation());
+			GetWorld()->SpawnActor<AEnemyBullet>(normalBullet, firePosition->GetComponentLocation(), firePosition->GetComponentRotation());
 		}
 	} 
 	else
@@ -211,6 +213,11 @@ void AZakoEnemy::SetupTimeline()
 		MovementTimeline.AddInterpVector(MovementCurve, TimelineCallback);
 		MovementTimeline.SetLooping(false);
 	}
+}
+
+void AZakoEnemy::tracePtrn()
+{
+	GetWorld()->SpawnActor<AEnemyBullet>(TraceBullet, firePosition->GetComponentLocation(), firePosition->GetComponentRotation());
 }
 
 void AZakoEnemy::radialPtrn()
