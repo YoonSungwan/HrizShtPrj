@@ -14,7 +14,7 @@ AKillZone3::AKillZone3()
 	SetRootComponent(boxComp);
 	boxComp->SetMobility(EComponentMobility::Static);
 
-	boxComp->SetBoxExtent(FVector(50.f, 2000.f, 50.f));
+	boxComp->SetBoxExtent(FVector(1000.f, 2000.f, 1000.f));
 
 	boxComp->SetCollisionProfileName(TEXT("KillZone3"));
 }

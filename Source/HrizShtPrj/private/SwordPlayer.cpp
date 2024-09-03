@@ -25,6 +25,7 @@ void ASwordPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 
 void ASwordPlayer::FireJ()
 {
+	Super::FireJ();
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.bNoFail = true;

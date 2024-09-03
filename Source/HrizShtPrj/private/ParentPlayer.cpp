@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/ArrowComponent.h"
+#include "JY_GameModeBase.h"
 #include "PlayerBullet.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -84,6 +85,7 @@ void AParentPlayer::Tick(float DeltaTime)
 
 	if (playerHUD != nullptr)
 	{
+		playerHUD->UpdateJSkillCoolDown(GetJSkillCooldownRatio());
 		playerHUD->UpdateKSkillCoolDown(GetKSkillCooldownRatio());
 		playerHUD->UpdateLSkillCoolDown(GetLSkillCooldownRatio());
 	}
@@ -108,7 +110,7 @@ void AParentPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		enhancedInputComponent->BindAction(IA_Vertical, ETriggerEvent::Completed, this,
 			&AParentPlayer::OnInputVertical);
 		enhancedInputComponent->BindAction(IA_JSkill, ETriggerEvent::Started, this,
-			&AParentPlayer::FireJ);
+			&AParentPlayer::TryFireJ);
 		enhancedInputComponent->BindAction(IA_KSkill, ETriggerEvent::Started, this,
 			&AParentPlayer::TryFireK);
 		enhancedInputComponent->BindAction(IA_LSkill, ETriggerEvent::Started, this,
@@ -119,6 +121,12 @@ void AParentPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 float AParentPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (bIsInvincible)
+	{
+		// 무적 상태일 때는 데미지를 무시
+		return 0.0f;
+	}
+
 	float HitDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	// 체력 관리
@@ -148,6 +156,10 @@ void AParentPlayer::HandleLives()
 		{
 			playerHUD->UpdateHealth(Lives);
 		}
+
+		// 무적 상태를 설정하고 깜박이기 시작
+		StartInvincibility(3.0f);
+	
 	}
 
 	else
@@ -155,6 +167,13 @@ void AParentPlayer::HandleLives()
 		CurrentHealth = 0.f;
 		playerHUD->UpdateHealth(0);
 		Destroy();
+		
+		AJY_GameModeBase* GameMode = Cast<AJY_GameModeBase>(GetWorld()->GetAuthGameMode());
+
+		if (GameMode != nullptr)
+		{
+			GameMode->GameOver();
+		}
 	}
 }
 
@@ -176,7 +195,8 @@ void AParentPlayer::OnInputVertical(const struct FInputActionValue& value)
 
 void AParentPlayer::FireJ()
 {
-	
+	JSkillCooldown = JSkillMaxCooldown;
+	bcanFireJ = false;	// 쿨타임 동안 스킬 발동 비활성화
 }
 
 void AParentPlayer::FireK()
@@ -190,6 +210,14 @@ void AParentPlayer::FireL()
 {
 	LSkillCooldown = LSkillMaxCooldown;
 	bcanFireL = false;	// 쿨타임 동안 스킬 발동 비활성화
+}
+
+void AParentPlayer::TryFireJ()
+{
+	if (bcanFireJ && JSkillCooldown <= 0.0f)
+	{
+		FireJ();
+	}
 }
 
 void AParentPlayer::TryFireK()
@@ -210,6 +238,18 @@ void AParentPlayer::TryFireL()
 
 void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 {
+	if (JSkillCooldown > 0.0f)
+	{
+		JSkillCooldown -= DeltaTime;
+
+		if (JSkillCooldown <= 0.0f)
+		{
+			JSkillCooldown = 0.0f;
+			bcanFireJ = true;	// 쿨타임 끝나면 발동 가능
+		}
+	}
+
+
 	if (KSkillCooldown > 0.0f)
 	{
 		KSkillCooldown -= DeltaTime;
@@ -230,5 +270,35 @@ void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 			bcanFireL = true;	// 쿨타임 끝나면 발동 가능
 		}
 	}
+}
+
+void AParentPlayer::Blink()
+{
+	bool bIsCurrentlyVisible = !IsHidden();
+	SetActorHiddenInGame(bIsCurrentlyVisible);
+}
+
+void AParentPlayer::StartInvincibility(float Duration)
+{
+	bIsInvincible = true;
+	SetActorEnableCollision(false);	// 충돌 비활성화
+	StartBlinking(Duration);
+
+	// 무적 상태 해제 타이머 설정
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_Invincibility, this, &AParentPlayer::EndInvincibility, Duration, false);
+}
+
+void AParentPlayer::EndInvincibility()
+{
+	bIsInvincible = false;
+	SetActorEnableCollision(true); // 충돌 다시 활성화
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Blink);	// 깜박임 타이머 중지
+	SetActorHiddenInGame(false);	// 깜박임 끝나면 다시 보이게 설정
+}
+
+void AParentPlayer::StartBlinking(float Duration)
+{
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_Blink, this, &AParentPlayer::Blink, 0.2f, true, 0.0f);
+	// GetWorld()->GetTimerManager().SetTimer(TimerHandle_Invincibility, this, &AParentPlayer::EndInvincibility, 2.0f, false);
 }
 

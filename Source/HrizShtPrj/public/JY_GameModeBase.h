@@ -16,9 +16,17 @@ class HRIZSHTPRJ_API AJY_GameModeBase : public AGameModeBase
 	
 public:
 	void AddScore(int32 point);
+	void SaveScoreData(int32 SaveValue);
+	int32 LoadScoreData();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UPlayerHUD> playerHUD;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameOverUI> GameOverUI;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class USaveGame> saveGameclass;
+	void GameOver();
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,6 +37,8 @@ private:
 
 	// 현재 뷰 포트에 로드된 위젯 저장용 변수
 	class UPlayerHUD* mainUI;
+	class UGameOverUI* gameover;
 
 	void PrintScore();
+	FString dataName;
 };

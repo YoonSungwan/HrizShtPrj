@@ -50,6 +50,14 @@ void UPlayerHUD::UpdateStopWatch(float Time)
 	}
 }
 
+void UPlayerHUD::UpdateJSkillCoolDown(float Ratio)
+{
+	if (JSkillCooldownBar != nullptr)
+	{
+		JSkillCooldownBar->SetPercent(Ratio);
+	}
+}
+
 void UPlayerHUD::UpdateKSkillCoolDown(float Ratio)
 {
 	if (KSkillCooldownBar != nullptr)

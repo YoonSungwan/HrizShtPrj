@@ -85,27 +85,46 @@ protected:
 	virtual void FireK();
 	virtual void FireL();
 
+	virtual void TryFireJ();
 	virtual void TryFireK();
 	virtual void TryFireL();
 
 	void UpdateSkillCooldown(float DeltaTime);
 
 protected:
+	float JSkillCooldown = 0.f;
 	float KSkillCooldown = 0.f;
 	float LSkillCooldown = 0.f;
+	float JSkillMaxCooldown = 0.5f;
 	float KSkillMaxCooldown = 7.f;
 	float LSkillMaxCooldown = 30.f;
 
+	bool bcanFireJ = true;
 	bool bcanFireK = true;
 	bool bcanFireL = true;
+	
+	// 무적 상태 플래그
+	bool bIsInvincible = false;
 
 public:
+	inline float GetJSkillCooldownRatio() const { return JSkillCooldown / JSkillMaxCooldown; }
 	inline float GetKSkillCooldownRatio() const { return KSkillCooldown / KSkillMaxCooldown; }
 	inline float GetLSkillCooldownRatio() const { return LSkillCooldown / LSkillMaxCooldown; }
+
+public:
+	void Blink();
+	void StartInvincibility(float Duration);
+	void EndInvincibility();
+	void StartBlinking(float Duration);
 
 private:
 	float _h;
 	float _v;
 
 	class UPlayerHUD* playerHUD;	// HUD 참조 추가
+
+// 무적 처리
+private:
+	FTimerHandle TimerHandle_Blink;	// 깜박임을 위한 타이머 핸들
+	FTimerHandle TimerHandle_Invincibility;	// 무적 상태를 위한 타이머 핸들
 };

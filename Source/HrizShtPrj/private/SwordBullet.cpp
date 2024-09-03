@@ -46,6 +46,5 @@ void ASwordBullet::OnSwordOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		UGameplayStatics::ApplyDamage(enemy, BulletDamage, nullptr, this, DamageType);
 
 	}
-
 	Destroy();
 }

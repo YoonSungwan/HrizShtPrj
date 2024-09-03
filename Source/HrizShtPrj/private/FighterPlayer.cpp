@@ -25,6 +25,7 @@ void AFighterPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 void AFighterPlayer::FireJ()
 {
+	Super::FireJ();
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
 	APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory,
 		firePosition->GetComponentLocation(),

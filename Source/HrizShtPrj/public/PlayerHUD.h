@@ -37,7 +37,7 @@ public:
 
 	// 스킬 세팅
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* SkillJCool;
+	class UProgressBar* JSkillCooldownBar;
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* KSkillCooldownBar;
@@ -52,6 +52,7 @@ public:
 	void UpdateStopWatch(float Time);
 	
 	// progressBar의 비율 구하기
+	void UpdateJSkillCoolDown(float Ratio);
 	void UpdateKSkillCoolDown(float Ratio);
 	void UpdateLSkillCoolDown(float Ratio);
 
