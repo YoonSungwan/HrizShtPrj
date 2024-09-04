@@ -19,6 +19,8 @@ public:
 
 	void AddScore(int32 point);
 	void SaveScoreData(int32 SaveValue);
+
+	UFUNCTION(BlueprintCallable)
 	int32 LoadScoreData();
 
 	void GameOver();
@@ -38,10 +40,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 CurrentScore = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HighScore;
 
+private:
 	// 현재 뷰 포트에 로드된 위젯 저장용 변수
 	class UPlayerHUD* mainUI;
 	class UGameOverUI* gameover;

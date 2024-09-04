@@ -18,6 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	ASwordPlayer();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

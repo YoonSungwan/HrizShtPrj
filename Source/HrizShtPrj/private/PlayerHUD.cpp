@@ -7,6 +7,9 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "GameFramework/PlayerController.h"
+#include "JY_GameModeBase.h"
+#include "PlayerStruct.h"
+#include "Engine/DataTable.h"
 
 void UPlayerHUD::UpdateHealth(int32 Lives)
 {
@@ -77,17 +80,57 @@ void UPlayerHUD::UpdateLSkillCoolDown(float Ratio)
 void UPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	// 플레이어 캐릭터 가져오기
-	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
-	if (playerController != nullptr)
+	
+// HUD가 초기화될 때 스킬 바 이미지를 업데이트
+	
+	if (DT_PlayerSelect != nullptr)
 	{
-		PlayerCharacter = Cast<AParentPlayer>(playerController->GetPawn());
-
-		if (PlayerCharacter != nullptr)
+		// 플레이어 캐릭터 가져오기
+		APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+		AParentPlayer* player = Cast<AParentPlayer>(playerController->GetPawn());
+		if (playerController != nullptr)
 		{
-			//UpdateKSkillCoolDown();
-			//UpdateLSkillCoolDown();
+			if (player != nullptr)
+			{
+				UpdateSkillImages();
+			}
+		}
+		
+	}
+}
+
+void UPlayerHUD::UpdateSkillImages()
+{
+	// 플레이어 타입 가져오기
+	APlayerController* pc = GetWorld()->GetFirstPlayerController();
+	AParentPlayer* player = Cast<AParentPlayer>(pc->GetPawn());
+
+	if (player != nullptr && DT_PlayerSelect != nullptr)
+	{
+		// 로그를 추가하여 함수 호출 확인
+		FString playerType = player->GetPlayerType();	// 플레이어 클래스에서 타입을 가져온다.
+
+
+		// 데이터 테이블에서 해당플레이어 타입의 데이터를 가져옵니다.
+		static const FString ContextString(TEXT("Player Data Context"));
+		FPlayerStruct* playerData = DT_PlayerSelect->FindRow<FPlayerStruct>(FName(*playerType), TEXT(""));
+
+		if (playerData != nullptr)
+		{
+			if (JSkillImg != nullptr && playerData->JSkill)
+			{
+				JSkillImg->SetBrushFromTexture(playerData->JSkill);
+			}
+
+			if (KSkillImg != nullptr && playerData->KSkill)
+			{
+				KSkillImg->SetBrushFromTexture(playerData->KSkill);
+			}
+
+			if (LSkillImg != nullptr && playerData->LSkill)
+			{
+				LSkillImg->SetBrushFromTexture(playerData->LSkill);
+			}
 		}
 	}
 }

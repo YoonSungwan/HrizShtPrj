@@ -28,7 +28,7 @@ void AJY_GameModeBase::AddScore(int32 point)
 
 void AJY_GameModeBase::SaveScoreData(int32 SaveValue)
 {
-	saveGameclass = USaveData::StaticClass();
+	// saveGameclass = USaveData::StaticClass();
 
 	USaveData* saveGameInstance = Cast<USaveData>(UGameplayStatics::CreateSaveGameObject(saveGameclass));
 
@@ -40,6 +40,9 @@ void AJY_GameModeBase::SaveScoreData(int32 SaveValue)
 		// 게임 데이터를 슬롯에 저장한다.
 		dataName = TEXT("HighScoreData");
 		UGameplayStatics::SaveGameToSlot(saveGameInstance, dataName, 0);
+	
+		// 로그 
+		
 	}
 }
 
@@ -48,6 +51,7 @@ int32 AJY_GameModeBase::LoadScoreData()
 	// 저장된 게임 데이터를 불러옵니다.
 	if (UGameplayStatics::DoesSaveGameExist(dataName, 0))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *dataName);
 		USaveGame* LoadedGame = UGameplayStatics::LoadGameFromSlot(dataName, 0);
 
 		// 로드된 게임 데이터를 USaveData로 캐스팅합니다.
@@ -57,6 +61,7 @@ int32 AJY_GameModeBase::LoadScoreData()
 		{
 			// 로드된 데이터에서 ScoreData 값을 HighScore에 할당합니다.
 			HighScore = SaveDataInstance->ScoreData;
+
 			return HighScore;
 		}
 	}
@@ -76,6 +81,9 @@ void AJY_GameModeBase::GameOver()
 			{
 				mainUI->RemoveFromParent();
 				APlayerController* pc = GetWorld()->GetFirstPlayerController();
+
+				//pc->SetInputMode(FInputModeUIOnly());
+
 				pc->SetShowMouseCursor(true);
 				UGameplayStatics::SetGamePaused(GetWorld(), true);
 			}
@@ -99,6 +107,10 @@ void AJY_GameModeBase::BeginPlay()
 		if (mainUI != nullptr)
 		{
 			mainUI->AddToViewport();
+
+			APlayerController* pc = GetWorld()->GetFirstPlayerController();
+			pc->SetInputMode(FInputModeGameOnly());
+			pc->SetShowMouseCursor(false);
 		}
 
 		// 플레이어 캐릭터를 찾고 HUD를 설정
@@ -118,7 +130,6 @@ void AJY_GameModeBase::PrintScore()
 	if (mainUI != nullptr)
 	{
 		mainUI->ScoreData->SetText(FText::AsNumber(CurrentScore));
-		mainUI->HighScoreData->SetText(FText::AsNumber(HighScore));
 	}
 }
 

@@ -14,5 +14,6 @@ class HRIZSHTPRJ_API USaveData : public USaveGame
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 ScoreData;
 };

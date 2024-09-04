@@ -4,7 +4,6 @@
 #include "ParentPlayer.h"
 #include "PlayerHUD.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -25,16 +24,15 @@ AParentPlayer::AParentPlayer()
 	capComp->SetCapsuleHalfHeight(55.f);
 	capComp->SetCapsuleRadius(33.f);
 
-
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Geometry"));
-	meshComp->SetupAttachment(capComp);
+	skmeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character"));
+	skmeshComp->SetupAttachment(capComp);
 
 	firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("Fire PositionFront"));
 	firePosition->SetupAttachment(capComp);
 	firePosition->SetWorldRotation(FRotator(0.f, 90.f, 0.f));
 
 	capComp->SetCollisionProfileName(TEXT("Player"));
-	meshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	skmeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
 	CurrentHealth = MaxHealth;
 }
@@ -270,6 +268,11 @@ void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 			bcanFireL = true;	// 쿨타임 끝나면 발동 가능
 		}
 	}
+}
+
+FString AParentPlayer::GetPlayerType() const
+{
+	return PlayerType;
 }
 
 void AParentPlayer::Blink()

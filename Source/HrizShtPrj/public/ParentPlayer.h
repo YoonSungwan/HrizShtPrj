@@ -41,7 +41,7 @@ public:
 
 	// mesh 컴포넌트
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* meshComp;
+	class USkeletalMeshComponent* skmeshComp;
 
 	UPROPERTY(EditAnywhere)
 	class UArrowComponent* firePosition;
@@ -105,6 +105,15 @@ protected:
 	
 	// 무적 상태 플래그
 	bool bIsInvincible = false;
+
+// 플레이어 타입 설정
+public:
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	FString GetPlayerType() const;
+protected:
+	// 플레이어 타입
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	FString PlayerType;
 
 public:
 	inline float GetJSkillCooldownRatio() const { return JSkillCooldown / JSkillMaxCooldown; }

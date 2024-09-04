@@ -13,6 +13,11 @@ void ASwordPlayer::BeginPlay()
 	Super::BeginPlay();
 }
 
+ASwordPlayer::ASwordPlayer()
+{
+	PlayerType = TEXT("SwordPlayer");	// 플레이어 타입 설정
+}
+
 void ASwordPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

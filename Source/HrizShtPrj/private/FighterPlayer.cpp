@@ -13,6 +13,11 @@ void AFighterPlayer::BeginPlay()
 	Super::BeginPlay();
 }
 
+AFighterPlayer::AFighterPlayer()
+{
+	PlayerType = TEXT("FighterPlayer");	// 플레이어 타입 설정
+}
+
 void AFighterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

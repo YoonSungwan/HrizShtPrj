@@ -21,12 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* ScoreData;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* HighscoreText;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock*HighScoreData;
-
 	// 체력
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Heart1;
@@ -34,6 +28,15 @@ public:
 	class UImage* Heart2;
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Heart3;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* JSkillImg;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* KSkillImg;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* LSkillImg;
 
 	// 스킬 세팅
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -43,6 +46,9 @@ public:
 	class UProgressBar* KSkillCooldownBar;
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* LSkillCooldownBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UDataTable* DT_PlayerSelect;	// 데이터 테이블에 대한 참조 추가
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* stopWatchText = nullptr;
@@ -59,6 +65,7 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-private:
-	class AParentPlayer* PlayerCharacter;
+public:
+	
+	void UpdateSkillImages();
 };

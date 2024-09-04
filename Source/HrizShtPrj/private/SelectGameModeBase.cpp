@@ -20,13 +20,10 @@ void ASelectGameModeBase::BeginPlay()
 
 		if (selectUI != nullptr)
 		{
-			FInputModeUIOnly inputMode;
-			inputMode.SetWidgetToFocus(selectUI->TakeWidget());
-			inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
+			FInputModeUIOnly;
 			selectUI->AddToViewport();
 			pc->bShowMouseCursor = true;
-			pc->SetInputMode(inputMode);
+			pc->SetInputMode(FInputModeUIOnly());
 			FindCamera();
 
 			if (CameraActor != nullptr)
@@ -88,5 +85,5 @@ void ASelectGameModeBase::SetFocusIndex(bool bIncrease)
 
 void ASelectGameModeBase::UpdateTargetLocation()
 {
-	TargetPosition = players[CurrentFocusIndex]->GetActorLocation() + FVector(0.f, 220.f, 0.f);
+	TargetPosition = players[CurrentFocusIndex]->GetActorLocation() + FVector(0.f, 50.f, 0.f);
 }
