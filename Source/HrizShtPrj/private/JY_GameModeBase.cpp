@@ -4,10 +4,14 @@
 #include "PlayerHUD.h"
 #include "GameOverUI.h"
 #include "ParentPlayer.h"
+#include "SwordPlayer.h"
+#include "FighterPlayer.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "SaveData.h"
+#include "GI_PlayerGame.h"
+
 
 void AJY_GameModeBase::AddScore(int32 point)
 {
@@ -82,6 +86,9 @@ void AJY_GameModeBase::GameOver()
 void AJY_GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FInputModeGameOnly inputMode;
+	GetWorld()->GetFirstPlayerController()->SetInputMode(inputMode);
 
 	HighScore = LoadScoreData();
 

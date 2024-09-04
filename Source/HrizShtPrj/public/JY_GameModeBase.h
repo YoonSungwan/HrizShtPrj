@@ -15,18 +15,25 @@ class HRIZSHTPRJ_API AJY_GameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+
+
 	void AddScore(int32 point);
 	void SaveScoreData(int32 SaveValue);
 	int32 LoadScoreData();
 
+	void GameOver();
+public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UPlayerHUD> playerHUD;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UGameOverUI> GameOverUI;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class USaveGame> saveGameclass;
-	void GameOver();
+	
+	/*UPROPERTY(EditAnywhere)
+	TSubclassOf<class ParentPlayer> defaultPawnClass;*/
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,6 +46,7 @@ private:
 	class UPlayerHUD* mainUI;
 	class UGameOverUI* gameover;
 
+	
 	void PrintScore();
 	FString dataName;
 };
