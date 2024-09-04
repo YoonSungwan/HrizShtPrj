@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/ArrowComponent.h"
+#include "JY_GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyBullet.h"
 
@@ -137,6 +138,13 @@ void AZakoEnemy::hit(float Damage)
 void AZakoEnemy::death()
 {
 	if (health > 0) {
+		return;
+	}
+	
+	auto* gm = Cast<AJY_GameModeBase>(GetWorld()->GetAuthGameMode());
+	if (gm)
+	{
+		gm->AddScore(distroyScore);
 		return;
 	}
 

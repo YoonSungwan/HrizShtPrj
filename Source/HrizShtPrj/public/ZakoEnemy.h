@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "OptionInit")
 	float escapeCnt = 10.0f;
 
+	UPROPERTY(EditAnywhere, Category = "OptionInit")
+	int32 distroyScore = 200;
+
 	//�⺻ ����
 	UPROPERTY(EditAnywhere, Category = "Pattern")
 	bool isFire = false;
