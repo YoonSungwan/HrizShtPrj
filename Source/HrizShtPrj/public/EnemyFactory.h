@@ -26,9 +26,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
 	TSubclassOf<class AZakoEnemy> enemy;
 
-	UPROPERTY(EditAnywhere, Category = "EnemySpawn")
-	FVector spawnRange = FVector(50,0,50);
-
 	UPROPERTY(EditAnywhere, Category="EnemySpawn")
 	float enemySpawnDelay = 1.0f;
 
@@ -37,7 +34,7 @@ public:
 
 	TArray<FVector> spawnLocArr;
 	
-	float spawnInterval = 10.0f;
+	float factorySpawnInterval = 10.0f;
 
 	UPROPERTY(EditAnywhere, Category="SpawnerOption")
 	float startDelay = 5.0f;
@@ -45,13 +42,19 @@ public:
 	UPROPERTY(EditAnywhere, Category="SpawnerOption")
 	int32 DestroyFactoryCnt = 5;
 
-	UPROPERTY(EditAnywhere, Category="SpawnerOption")
-	int32 factoryDelayRange = 10;
+	UPROPERTY(EditAnywhere, Category = "SpawnerOption")
+	int32 factoryDelayRange = 3;
 
-	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
+	FVector spawnRange = FVector(50, 0, 50);
+
+	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
+	int32 factoryLocRandom = 1;
+
+	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
 	bool spawnHriz = false;
 
-	UPROPERTY(EditAnywhere, Category="SpawnerOption")
+	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
 	bool spawnVrtc = true;
 	
 	void setEnemySpawner();

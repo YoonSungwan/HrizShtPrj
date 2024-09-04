@@ -25,8 +25,8 @@ void AEnemyFactory::BeginPlay()
 	GetWorldTimerManager().SetTimer(tickHandle, this, &AEnemyFactory::startSpawn, startDelay, false);
 
 	//factory 자체 쿨타임
-	GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, spawnInterval, true);
-	GetWorldTimerManager().UnPauseTimer(factoryHandle);
+	GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, factorySpawnInterval, true);
+	GetWorldTimerManager().PauseTimer(factoryHandle);
 }
 
 // Called every frame
@@ -68,7 +68,7 @@ void AEnemyFactory::Tick(float DeltaTime)
 void AEnemyFactory::initializeValue()
 {
 	FVector initLoc = GetActorLocation();
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < factoryLocRandom; i++)
 	{
 		if(spawnHriz)
 		{
@@ -82,8 +82,8 @@ void AEnemyFactory::initializeValue()
 		spawnLocArr.Add(initLoc);
 	}
 	
-	int32 SpawnerDelay = FMath::RandRange(3, factoryDelayRange);
-	spawnInterval = (enemyMaxSpawn * enemySpawnDelay) + SpawnerDelay;
+	//int32 SpawnerDelay = FMath::RandRange(3, factoryDelayRange);
+	factorySpawnInterval = (enemyMaxSpawn * enemySpawnDelay) + factoryDelayRange;
 }
 
 
@@ -99,7 +99,13 @@ void AEnemyFactory::setEnemySpawner()
 	{
 		this->destroySpawner();
 	}
-	int32 arrIdx = FMath::RandRange(0, spawnLocArr.Num() - 1);
+	int32 arrIdx = 0;
+	if (spawnHriz || spawnVrtc)
+	{
+		arrIdx = FMath::RandRange(0, spawnLocArr.Num() - 1);
+		UE_LOG(LogTemp, Warning, TEXT("random dix is %d"), arrIdx);
+		UE_LOG(LogTemp, Warning, TEXT("random value is %s"), *spawnLocArr[arrIdx].ToString());
+	}
 	SetActorLocation(spawnLocArr[arrIdx]);
 	
 	timerCnt++;
