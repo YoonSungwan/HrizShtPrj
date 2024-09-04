@@ -15,7 +15,7 @@ class HRIZSHTPRJ_API AJY_GameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-
+	AJY_GameModeBase();
 
 	void AddScore(int32 point);
 	void SaveScoreData(int32 SaveValue);
@@ -33,9 +33,6 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class USaveGame> saveGameclass;
-	
-	/*UPROPERTY(EditAnywhere)
-	TSubclassOf<class ParentPlayer> defaultPawnClass;*/
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,5 +50,6 @@ private:
 
 	
 	void PrintScore();
+	void PrintHighScore();
 	FString dataName;
 };

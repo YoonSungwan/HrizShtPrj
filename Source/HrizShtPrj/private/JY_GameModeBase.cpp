@@ -13,6 +13,11 @@
 #include "GI_PlayerGame.h"
 
 
+AJY_GameModeBase::AJY_GameModeBase()
+{
+	dataName = TEXT("HighScoreData");
+}
+
 void AJY_GameModeBase::AddScore(int32 point)
 {
 	CurrentScore += point;
@@ -20,10 +25,10 @@ void AJY_GameModeBase::AddScore(int32 point)
 	if (CurrentScore > HighScore)
 	{
 		HighScore = CurrentScore;
-		SaveScoreData(HighScore);
+		SaveScoreData(HighScore);	
 	}
-
 	PrintScore();
+	
 }
 
 void AJY_GameModeBase::SaveScoreData(int32 SaveValue)
@@ -32,17 +37,20 @@ void AJY_GameModeBase::SaveScoreData(int32 SaveValue)
 
 	USaveData* saveGameInstance = Cast<USaveData>(UGameplayStatics::CreateSaveGameObject(saveGameclass));
 
+	if (saveGameclass == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SaveGameClass is not set!"));
+		return;
+	}
+
 	if (saveGameInstance != nullptr)
 	{
 		// score 데이터를 저장할 값을 설정
 		saveGameInstance->ScoreData = SaveValue;
 
 		// 게임 데이터를 슬롯에 저장한다.
-		dataName = TEXT("HighScoreData");
-		UGameplayStatics::SaveGameToSlot(saveGameInstance, dataName, 0);
-	
-		// 로그 
 		
+		UGameplayStatics::SaveGameToSlot(saveGameInstance, dataName, 0);
 	}
 }
 
@@ -51,7 +59,6 @@ int32 AJY_GameModeBase::LoadScoreData()
 	// 저장된 게임 데이터를 불러옵니다.
 	if (UGameplayStatics::DoesSaveGameExist(dataName, 0))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *dataName);
 		USaveGame* LoadedGame = UGameplayStatics::LoadGameFromSlot(dataName, 0);
 
 		// 로드된 게임 데이터를 USaveData로 캐스팅합니다.
@@ -61,6 +68,7 @@ int32 AJY_GameModeBase::LoadScoreData()
 		{
 			// 로드된 데이터에서 ScoreData 값을 HighScore에 할당합니다.
 			HighScore = SaveDataInstance->ScoreData;
+			UE_LOG(LogTemp, Warning, TEXT("%d"), HighScore);
 
 			return HighScore;
 		}
@@ -123,6 +131,7 @@ void AJY_GameModeBase::BeginPlay()
 			}
 		}
 	}
+	PrintHighScore();
 }
 
 void AJY_GameModeBase::PrintScore()
@@ -130,6 +139,14 @@ void AJY_GameModeBase::PrintScore()
 	if (mainUI != nullptr)
 	{
 		mainUI->ScoreData->SetText(FText::AsNumber(CurrentScore));
+	}
+}
+
+void AJY_GameModeBase::PrintHighScore()
+{
+	if (mainUI != nullptr)
+	{
+		mainUI->HighScoreData->SetText(FText::AsNumber(HighScore));
 	}
 }
 

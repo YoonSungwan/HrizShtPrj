@@ -21,6 +21,12 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* ScoreData;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* HighscoreText;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* HighScoreData;
+
 	// Ã¼·Â
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Heart1;
