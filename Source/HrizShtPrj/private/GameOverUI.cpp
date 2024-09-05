@@ -18,7 +18,7 @@ void UGameOverUI::NativeConstruct()
 void UGameOverUI::RestartGame()
 {
 	// 레벨을 다시 로드한다.
-	UGameplayStatics::OpenLevel(GetWorld(), "MainLv");
+	UGameplayStatics::OpenLevel(GetWorld(), "CharacterSelectUI");
 }
 
 void UGameOverUI::QuitGame()

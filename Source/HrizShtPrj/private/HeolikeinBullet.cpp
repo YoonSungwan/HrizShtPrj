@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ZakoEnemy.h"
+#include "EnemyBullet.h"
 
 AHeolikeinBullet::AHeolikeinBullet()
 {
@@ -87,6 +88,12 @@ void AHeolikeinBullet::OnHeolikeinOverlap(UPrimitiveComponent* OverlappedCompone
             Target.Add(enemy);
         }
         
+    }
+
+    AEnemyBullet* enemyBullet = Cast<AEnemyBullet>(OtherActor);
+    if (enemyBullet != nullptr)
+    {
+        OtherActor->Destroy();
     }
 }
 
