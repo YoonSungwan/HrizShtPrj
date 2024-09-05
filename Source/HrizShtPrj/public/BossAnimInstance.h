@@ -17,13 +17,14 @@ class HRIZSHTPRJ_API UBossAnimInstance : public UAnimInstance
 public:
 	APawn* player;
 	
-	UAnimMontage* PlayMontage;
-
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCharacterMovementComponent> charMovement;
 
 	UPROPERTY(VisibleAnywhere)
 	FVector animLoc;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
+	float animLength;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
 	FVector playerLoc;
