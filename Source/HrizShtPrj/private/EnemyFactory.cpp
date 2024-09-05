@@ -57,9 +57,6 @@ void AEnemyFactory::Tick(float DeltaTime)
 				GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
 				currnetTime = 0;
 				currentCnt++;
-
-				UE_LOG(LogTemp, Warning, TEXT("timerCnt is %d"), timerCnt);
-				UE_LOG(LogTemp, Warning, TEXT("DestroyFactoryCnt is %d"), DestroyFactoryCnt);
 			}
 	
 		}

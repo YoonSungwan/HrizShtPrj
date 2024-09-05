@@ -8,6 +8,7 @@
 #include "JY_GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyBullet.h"
+#include "PlayerBullet.h"
 
 // Sets default values
 AZakoEnemy::AZakoEnemy()
@@ -128,16 +129,16 @@ void AZakoEnemy::attackPlayer(float DeltaTime)
 
 void AZakoEnemy::hit(float Damage)
 {
-	health -= Damage;
+	this->health -= Damage;
 
-	if (health <= 0) {
+	if (this->health <= 0) {
 		this->death();
 	}
 }
 
 void AZakoEnemy::death()
 {
-	if (health > 0) {
+	if ((this->health) > 0) {
 		return;
 	}
 	
@@ -145,7 +146,6 @@ void AZakoEnemy::death()
 	if (gm)
 	{
 		gm->AddScore(distroyScore);
-		return;
 	}
 
 	this->Destroy();
@@ -174,7 +174,6 @@ void AZakoEnemy::rotatePlayer(float DeltaTime)
 float AZakoEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float dmg = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
 	// 체력 관리
 	hit(dmg);
 
@@ -184,12 +183,14 @@ float AZakoEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 // Damage Event
 void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (player != nullptr && player == Cast<APawn>(OtherActor))
+	if (player != nullptr && player == Cast<APawn>(OtherActor) || Cast<APlayerBullet>(OtherActor))
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, 50, nullptr, this, nullptr);
 	}
-
-	this->Destroy();
+	else
+	{
+		this->Destroy();
+	}
 }
 
 void AZakoEnemy::HandleMovementProgress(FVector Value)
