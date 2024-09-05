@@ -26,15 +26,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// 총알 블루프린트
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AHeolikeinBullet> KeinBullet;
 
 public:
 	virtual void FireJ() override;
 	virtual void FireK() override;
 	virtual void FireL() override;
 
-protected:
+public:
+	// 총알 블루프린트
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AHeolikeinBullet> KeinBullet;
 
+	UPROPERTY(EditAnywhere)
+	class USoundBase* punchSound;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* HeolikeinSound;
 };

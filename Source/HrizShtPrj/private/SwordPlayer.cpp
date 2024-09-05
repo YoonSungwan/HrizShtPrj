@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "SwordBullet.h"
 #include "PlayerBullet.h"
+#include "Kismet/GameplayStatics.h"
 
 void ASwordPlayer::BeginPlay()
 {
@@ -31,6 +32,9 @@ void ASwordPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 void ASwordPlayer::FireJ()
 {
 	Super::FireJ();
+	
+	UGameplayStatics::PlaySound2D(GetWorld(), swordSound);
+
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.bNoFail = true;
@@ -43,6 +47,9 @@ void ASwordPlayer::FireJ()
 void ASwordPlayer::FireK()
 {
 	Super::FireK();
+	
+	UGameplayStatics::PlaySound2D(GetWorld(), swordSound);
+
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정
@@ -76,6 +83,9 @@ void ASwordPlayer::FireK()
 void ASwordPlayer::FireL()
 {
 	Super::FireL();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), swordSound);
+
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정

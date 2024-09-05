@@ -31,6 +31,8 @@ void AFighterPlayer::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 void AFighterPlayer::FireJ()
 {
 	Super::FireJ();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), punchSound);
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
 	APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory,
 		firePosition->GetComponentLocation(),
@@ -40,6 +42,7 @@ void AFighterPlayer::FireJ()
 void AFighterPlayer::FireK()
 {
 	Super::FireK();
+
 	if (bulletFactory != nullptr)
 	{
 		// 발사할 방향들 설정
@@ -53,6 +56,7 @@ void AFighterPlayer::FireK()
 		// 각 방향으로 총알 발사
 		for (const FVector& Direction : Directions)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), punchSound);
 			// PlayerBullet 인스턴스 생성
 			FActorSpawnParameters SpawnParams;
 			FVector SpawnLocation = firePosition->GetComponentLocation();
@@ -74,6 +78,9 @@ void AFighterPlayer::FireK()
 void AFighterPlayer::FireL()
 {
 	Super::FireL();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), HeolikeinSound);
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.bNoFail = true;
 	// 총알 블루프린트 파일을 firePosition 위치에 생성한다.
