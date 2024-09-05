@@ -284,7 +284,10 @@ void AParentPlayer::Blink()
 void AParentPlayer::StartInvincibility(float Duration)
 {
 	bIsInvincible = true;
-	SetActorEnableCollision(false);	// 충돌 비활성화
+
+	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
+	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
+	// SetActorEnableCollision(false);	// 충돌 비활성화
 	StartBlinking(Duration);
 
 	// 무적 상태 해제 타이머 설정
@@ -294,7 +297,9 @@ void AParentPlayer::StartInvincibility(float Duration)
 void AParentPlayer::EndInvincibility()
 {
 	bIsInvincible = false;
-	SetActorEnableCollision(true); // 충돌 다시 활성화
+	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	// SetActorEnableCollision(true); // 충돌 다시 활성화
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Blink);	// 깜박임 타이머 중지
 	SetActorHiddenInGame(false);	// 깜박임 끝나면 다시 보이게 설정
 }

@@ -33,4 +33,3 @@ void AKillZone1::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
