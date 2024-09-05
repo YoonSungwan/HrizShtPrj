@@ -23,10 +23,6 @@ void AEnemyFactory::BeginPlay()
 	initializeValue();
 	
 	GetWorldTimerManager().SetTimer(tickHandle, this, &AEnemyFactory::startSpawn, startDelay, false);
-
-	//factory 자체 쿨타임
-	GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, factorySpawnInterval, true);
-	GetWorldTimerManager().PauseTimer(factoryHandle);
 }
 
 // Called every frame
@@ -36,23 +32,34 @@ void AEnemyFactory::Tick(float DeltaTime)
 
 	if(currentCnt >= enemyMaxSpawn)
 	{
-		if(!GetWorldTimerManager().IsTimerActive(factoryHandle))
+		if (!GetWorldTimerManager().IsTimerActive(factoryHandle))
 		{
-			GetWorldTimerManager().UnPauseTimer(factoryHandle);	
+			this->restartSpawnTimer();
 		}
 		return;
 	}
 
 	if(IsValid(enemy))
 	{
-		if(currnetTime >= enemySpawnDelay)
+		if(currnetTime >= enemySpawnDelay && !GetWorldTimerManager().IsTimerActive(factoryHandle))
 		{
 			APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 			if (PlayerController && PlayerController->GetPawn())
 			{
+				if (timerCnt >= DestroyFactoryCnt)
+				{
+					FString testLog = this->GetName();
+					UE_LOG(LogTemp, Warning, TEXT("destroy is %s"), *testLog);
+					this->destroySpawner();
+					return;
+				}
+
 				GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
 				currnetTime = 0;
 				currentCnt++;
+
+				UE_LOG(LogTemp, Warning, TEXT("timerCnt is %d"), timerCnt);
+				UE_LOG(LogTemp, Warning, TEXT("DestroyFactoryCnt is %d"), DestroyFactoryCnt);
 			}
 	
 		}
@@ -72,18 +79,18 @@ void AEnemyFactory::initializeValue()
 	{
 		if(spawnHriz)
 		{
-			initLoc.Y = initLoc.Y + spawnRange.Y * i;
+			initLoc.Y += (spawnRange.Y * i);
 		}
 
 		if(spawnVrtc)
 		{
-			initLoc.Z = initLoc.Z + spawnRange.Z * i;
+			initLoc.Z = (spawnRange.Z * i);
 		}
 		spawnLocArr.Add(initLoc);
 	}
 	
 	//int32 SpawnerDelay = FMath::RandRange(3, factoryDelayRange);
-	factorySpawnInterval = (enemyMaxSpawn * enemySpawnDelay) + factoryDelayRange;
+	//factorySpawnInterval = (enemyMaxSpawn * enemySpawnDelay) + factoryDelayRange;
 }
 
 
@@ -92,24 +99,26 @@ void AEnemyFactory::startSpawn()
 	SetActorTickEnabled(true);
 }
 
+void AEnemyFactory::restartSpawnTimer()
+{
+	//GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, factorySpawnInterval, true);
+	GetWorldTimerManager().SetTimer(factoryHandle, this, &AEnemyFactory::setEnemySpawner, factoryDelayRange, true);
+}
+
 
 void AEnemyFactory::setEnemySpawner()
 {
-	if(timerCnt >= DestroyFactoryCnt)
-	{
-		this->destroySpawner();
-	}
-	int32 arrIdx = 0;
 	if (spawnHriz || spawnVrtc)
 	{
+		int32 arrIdx = 0;
 		arrIdx = FMath::RandRange(0, spawnLocArr.Num() - 1);
-		UE_LOG(LogTemp, Warning, TEXT("random dix is %d"), arrIdx);
-		UE_LOG(LogTemp, Warning, TEXT("random value is %s"), *spawnLocArr[arrIdx].ToString());
+		SetActorLocation(spawnLocArr[arrIdx]);
 	}
-	SetActorLocation(spawnLocArr[arrIdx]);
-	
+
 	timerCnt++;
 	currentCnt = 0;
+
+	GetWorldTimerManager().ClearTimer(factoryHandle);
 }
 
 void AEnemyFactory::destroySpawner()

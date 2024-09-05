@@ -43,7 +43,7 @@ public:
 	int32 DestroyFactoryCnt = 5;
 
 	UPROPERTY(EditAnywhere, Category = "SpawnerOption")
-	int32 factoryDelayRange = 3;
+	float factoryDelayRange = 3;
 
 	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
 	FVector spawnRange = FVector(50, 0, 50);
@@ -60,6 +60,8 @@ public:
 	void setEnemySpawner();
 	void destroySpawner();
 	void startSpawn();
+
+	void restartSpawnTimer();
 	
 private:
 	int32 timerCnt = 0;
