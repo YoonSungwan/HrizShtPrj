@@ -26,7 +26,7 @@ AZakoEnemy::AZakoEnemy()
 	
 	//Åº¸· Arrow ÄÄÆ÷³ÍÆ®
 	firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Component"));
-	firePosition->SetupAttachment(capsComp);
+	firePosition->SetupAttachment(capsComp); 
 
 	firePosition->SetRelativeLocation(FVector(50.0f, 0.0f, 0.0f));
 
@@ -166,7 +166,12 @@ void AZakoEnemy::rotatePlayer(float DeltaTime)
 		FRotator desiredRotation = directionToPlayer.Rotation();
 		FRotator newRotation = FMath::RInterpTo(GetActorRotation(), desiredRotation, DeltaTime, 500);
 
-		SetActorRotation(newRotation);
+		if (newRotation.Roll <= 120)
+		{
+			SetActorRotation(newRotation);
+		}
+
+
 	}
 }
 
