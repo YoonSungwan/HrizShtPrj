@@ -25,28 +25,28 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FVector animLoc;
 
-	UPROPERTY(VisibleAnywhere)
-	uint32 bIsIdle : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
+	FVector playerLoc;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
 	FVector owingPawnLoc;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InitOption")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
 	int32 health = 5000;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InitOption")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
 	float moveSpd;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InitOption")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InitOption")
 	bool isAttaking = false;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BulletSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> normalBullet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BulletSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> traceBullet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BulletSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BulletSettings")
 	TSubclassOf<class AEnemyBullet> radialBullet;
 	
 	virtual void NativeInitializeAnimation() override;
