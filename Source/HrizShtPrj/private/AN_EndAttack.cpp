@@ -13,6 +13,11 @@ void UAN_EndAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* 
 		if (bossEnemyIns != nullptr)
 		{
 			bossEnemyIns->isAttaking = false;
+			bossEnemyIns->animLength = 0;
+
+			bossEnemyIns->BeforePattern = bossEnemyIns->patternNum;
+			
+			bossEnemyIns->patternNum = -1;
 		}
 	}
 }

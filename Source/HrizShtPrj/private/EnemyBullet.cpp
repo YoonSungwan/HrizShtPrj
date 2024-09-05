@@ -15,7 +15,7 @@ AEnemyBullet::AEnemyBullet()
 
 	capsComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Root Component"));
 	SetRootComponent(capsComp);
-
+	
 	bulletComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("static mesh Component"));
 	bulletComp->SetupAttachment(capsComp);
 
@@ -34,7 +34,7 @@ void AEnemyBullet::BeginPlay()
 	{
 		player = PlayerController->GetPawn();
 	}
-	
+	UE_LOG(LogTemp, Warning, TEXT("Spawn"));
 }
 
 // Called every frame

@@ -198,14 +198,6 @@ void AZakoEnemy::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	}
 }
 
-void AZakoEnemy::HandleMovementProgress(FVector Value)
-{
-	FVector StartLocation = InitLoc;
-	FVector EndLocation = FVector(StartLocation.X, InitLoc.Y - 500, direction.Z);
-	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Value.Y);
-	SetActorLocation(NewLocation);
-}
-
 void AZakoEnemy::startEscape()
 {
 	isEscape = true;
@@ -227,6 +219,14 @@ void AZakoEnemy::SetupTimeline()
 		MovementTimeline.AddInterpVector(MovementCurve, TimelineCallback);
 		MovementTimeline.SetLooping(false);
 	}
+}
+
+void AZakoEnemy::HandleMovementProgress(FVector Value)
+{
+	FVector StartLocation = InitLoc;
+	FVector EndLocation = FVector(StartLocation.X, InitLoc.Y - 500, direction.Z);
+	FVector NewLocation = FMath::Lerp(StartLocation, EndLocation, Value.Y);
+	SetActorLocation(NewLocation);
 }
 
 void AZakoEnemy::tracePtrn()

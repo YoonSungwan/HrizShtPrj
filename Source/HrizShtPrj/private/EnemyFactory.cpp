@@ -48,8 +48,6 @@ void AEnemyFactory::Tick(float DeltaTime)
 			{
 				if (timerCnt >= DestroyFactoryCnt)
 				{
-					FString testLog = this->GetName();
-					UE_LOG(LogTemp, Warning, TEXT("destroy is %s"), *testLog);
 					this->destroySpawner();
 					return;
 				}

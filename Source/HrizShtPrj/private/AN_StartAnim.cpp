@@ -17,11 +17,8 @@ void UAN_StartAnim::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* 
 			//bossEnemyIns->isAttaking = true;
 
 			float putLength = Animation->GetPlayLength();
-			FString name = Animation->GetName();
-			UE_LOG(LogTemp, Warning, TEXT("animName is %s"), *name);
 
 			bossEnemyIns->animLength = putLength;
-			UE_LOG(LogTemp, Warning, TEXT("animLength is %f"), putLength);
 		}
 	}
 

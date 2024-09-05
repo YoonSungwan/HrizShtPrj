@@ -26,11 +26,21 @@ void UANS_BakcAndRush::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	if (MeshComp && bossEnemy != nullptr)
 	{
 		bossEnemy->SetActorLocation(bossEnemy->GetActorLocation() + (-(bossEnemy->GetActorRightVector()) * (3400.00) * FrameDeltaTime));
-		UE_LOG(LogTemp, Warning, TEXT("%0.2f"), (bossSpd * 4));
 	}
 }
 
 void UANS_BakcAndRush::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("WDYM"));
+	if (MeshComp)
+	{
+		if (bossEnemyIns != nullptr)
+		{
+			bossEnemyIns->isAttaking = false;
+			bossEnemyIns->animLength = 0;
+
+			bossEnemyIns->BeforePattern = bossEnemyIns->patternNum;
+			
+			bossEnemyIns->patternNum = 3;
+		}
+	}
 }
