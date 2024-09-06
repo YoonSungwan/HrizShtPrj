@@ -111,6 +111,16 @@ void AJY_GameModeBase::GameOver()
 	if (GameOverUI != nullptr)
 	{
 		gameover = CreateWidget<UGameOverUI>(GetWorld(), GameOverUI);
+
+		UAudioComponent* AudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), originBGM);
+		// 원래 BGM을 멈추고 보스 BGM을 재생
+		if (AudioComponent != nullptr)
+		{
+			AudioComponent->SetVolumeMultiplier(0.f);
+			AudioComponent->Stop();
+			AudioComponent = nullptr;
+		}
+
 		UGameplayStatics::PlaySound2D(GetWorld(), GameEndSound);
 
 		if (gameover != nullptr)

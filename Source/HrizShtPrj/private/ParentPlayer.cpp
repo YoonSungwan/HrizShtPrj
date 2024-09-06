@@ -42,19 +42,19 @@ void AParentPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// ÇöÀç ÇÃ·¹ÀÌ¾î°¡ ¼ÒÀ¯ÇÑ ÄÁÆ®·Ñ·¯¸¦ °¡Á®¿Â´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	APlayerController* pc = GetWorld()->GetFirstPlayerController();
 
-	// ¸¸ÀÏ ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ º¯¼ö¿¡ °ªÀÌ µé¾î ÀÖ´Ù¸é...
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½...
 	if (pc != nullptr)
 	{
-		// ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯·ÎºÎÅÍ ÀÔ·Â ¼­ºê ½Ã½ºÅÛ Á¤º¸¸¦ °¡Á®¿Â´Ù.
+		// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 		UEnhancedInputLocalPlayerSubsystem* subsys =
 			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
 
 		if (subsys != nullptr)
 		{
-			// ÀÔ·Â ¼­ºê ½Ã½ºÅÛ IMC ÆÄÀÏ º¯¼ö¸¦ ¿¬°áÇÑ´Ù.
+			// ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ IMC ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			subsys->AddMappingContext(IMC_Player, 0);
 		}
 	}
@@ -71,7 +71,7 @@ void AParentPlayer::Tick(float DeltaTime)
 	FVector newLocation = GetActorLocation() + dir * _moveSpeed * DeltaTime;
 	SetActorLocation(newLocation, true);
 	
-	// ½ºÅé¿öÄ¡ ¾÷µ¥ÀÌÆ®
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	if (playerHUD != nullptr)
 	{
 		float stopwatch = GetWorld()->GetTimeSeconds();
@@ -121,13 +121,13 @@ float AParentPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 {
 	if (bIsInvincible)
 	{
-		// ¹«Àû »óÅÂÀÏ ¶§´Â µ¥¹ÌÁö¸¦ ¹«½Ã
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		return 0.0f;
 	}
 
 	float HitDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	// Ã¼·Â °ü¸®
+	// Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	HandleHealth(HitDamage);
 
 	return HitDamage;
@@ -155,7 +155,7 @@ void AParentPlayer::HandleLives()
 			playerHUD->UpdateHealth(Lives);
 		}
 
-		// ¹«Àû »óÅÂ¸¦ ¼³Á¤ÇÏ°í ±ô¹ÚÀÌ±â ½ÃÀÛ
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì±ï¿½ ï¿½ï¿½ï¿½ï¿½
 		StartInvincibility(3.0f);
 	
 	}
@@ -194,20 +194,20 @@ void AParentPlayer::OnInputVertical(const struct FInputActionValue& value)
 void AParentPlayer::FireJ()
 {
 	JSkillCooldown = JSkillMaxCooldown;
-	bcanFireJ = false;	// ÄðÅ¸ÀÓ µ¿¾È ½ºÅ³ ¹ßµ¿ ºñÈ°¼ºÈ­
+	bcanFireJ = false;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ßµï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 }
 
 void AParentPlayer::FireK()
 {
 	KSkillCooldown = KSkillMaxCooldown;
-	bcanFireK = false;	// ÄðÅ¸ÀÓ µ¿¾È ½ºÅ³ ¹ßµ¿ ºñÈ°¼ºÈ­
+	bcanFireK = false;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ßµï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 	
 }
 
 void AParentPlayer::FireL()
 {
 	LSkillCooldown = LSkillMaxCooldown;
-	bcanFireL = false;	// ÄðÅ¸ÀÓ µ¿¾È ½ºÅ³ ¹ßµ¿ ºñÈ°¼ºÈ­
+	bcanFireL = false;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ßµï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 }
 
 void AParentPlayer::TryFireJ()
@@ -243,7 +243,7 @@ void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 		if (JSkillCooldown <= 0.0f)
 		{
 			JSkillCooldown = 0.0f;
-			bcanFireJ = true;	// ÄðÅ¸ÀÓ ³¡³ª¸é ¹ßµ¿ °¡´É
+			bcanFireJ = true;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßµï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 
@@ -255,7 +255,7 @@ void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 		if (KSkillCooldown <= 0.0f)
 		{
 			KSkillCooldown = 0.0f;
-			bcanFireK = true;	// ÄðÅ¸ÀÓ ³¡³ª¸é ¹ßµ¿ °¡´É
+			bcanFireK = true;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßµï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 
@@ -265,7 +265,7 @@ void AParentPlayer::UpdateSkillCooldown(float DeltaTime)
 		if (LSkillCooldown <= 0.0f)
 		{
 			LSkillCooldown = 0.0f;
-			bcanFireL = true;	// ÄðÅ¸ÀÓ ³¡³ª¸é ¹ßµ¿ °¡´É
+			bcanFireL = true;	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßµï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 }
@@ -287,10 +287,10 @@ void AParentPlayer::StartInvincibility(float Duration)
 
 	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
 	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
-	// SetActorEnableCollision(false);	// Ãæµ¹ ºñÈ°¼ºÈ­
+	// SetActorEnableCollision(false);	// ï¿½æµ¹ ï¿½ï¿½È°ï¿½ï¿½È­
 	StartBlinking(Duration);
 
-	// ¹«Àû »óÅÂ ÇØÁ¦ Å¸ÀÌ¸Ó ¼³Á¤
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle_Invincibility, this, &AParentPlayer::EndInvincibility, Duration, false);
 }
 
@@ -299,9 +299,9 @@ void AParentPlayer::EndInvincibility()
 	bIsInvincible = false;
 	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	capComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	// SetActorEnableCollision(true); // Ãæµ¹ ´Ù½Ã È°¼ºÈ­
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Blink);	// ±ô¹ÚÀÓ Å¸ÀÌ¸Ó ÁßÁö
-	SetActorHiddenInGame(false);	// ±ô¹ÚÀÓ ³¡³ª¸é ´Ù½Ã º¸ÀÌ°Ô ¼³Á¤
+	// SetActorEnableCollision(true); // ï¿½æµ¹ ï¿½Ù½ï¿½ È°ï¿½ï¿½È­
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Blink);	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+	SetActorHiddenInGame(false);	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
 void AParentPlayer::StartBlinking(float Duration)

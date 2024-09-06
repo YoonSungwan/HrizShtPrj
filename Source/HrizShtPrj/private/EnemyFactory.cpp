@@ -52,7 +52,16 @@ void AEnemyFactory::Tick(float DeltaTime)
 					return;
 				}
 
-				GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());
+				if(isBoss)
+				{
+					GetWorld()->SpawnActor<AActor>(boss, GetActorLocation(), GetActorRotation());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("boss Spawn!!!"));
+					GetWorld()->SpawnActor<AZakoEnemy>(enemy, GetActorLocation(), GetActorRotation());					
+				}
+				
 				currnetTime = 0;
 				currentCnt++;
 			}

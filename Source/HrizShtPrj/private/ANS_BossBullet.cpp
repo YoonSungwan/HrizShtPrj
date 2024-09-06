@@ -25,9 +25,6 @@ void UANS_BossBullet::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		{
 			FName BoneName = TEXT("Bone_Sword_47");
 			
-			FString test = Animation->GetName();
-			
-			// 본의 월드 위치를 가져오기
 			FTransform BoneTransform = MeshComp->GetSocketTransform(BoneName, RTS_World);
 			FVector BoneLocation = BoneTransform.GetLocation();
 			BoneLocation.X = 0;

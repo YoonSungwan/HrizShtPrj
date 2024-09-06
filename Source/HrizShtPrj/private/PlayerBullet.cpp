@@ -49,10 +49,10 @@ void APlayerBullet::Tick(float DeltaTime)
 
 void APlayerBullet::ShootSkill(float deltaTime)
 {
-	// Àü¹æÀ¸·Î ÀÌµ¿ÇÒ À§Ä¡¸¦ °è»êÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	FVector newLocation = GetActorLocation() + (GetActorForwardVector() *_moveSpeed * deltaTime);
 
-	// °è»êµÈ À§Ä¡ ÁÂÇ¥¸¦ ¾×ÅÍÀÇ »õ ÁÂÇ¥·Î ³Ö´Â´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 	SetActorLocation(newLocation);
 }
 
@@ -64,6 +64,6 @@ void APlayerBullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	{
 		UGameplayStatics::ApplyDamage(enemy, BulletDamage, nullptr, this, DamageType);
 	}
-
+	
 	Destroy();
 }

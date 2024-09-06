@@ -147,6 +147,11 @@ void AZakoEnemy::death()
 	{
 		gm->AddScore(distroyScore);
 	}
+	
+	if (EmitterTemplate)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EmitterTemplate, GetActorLocation());
+	}
 
 	this->Destroy();
 }

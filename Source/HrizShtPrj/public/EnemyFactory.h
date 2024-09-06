@@ -56,6 +56,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "RandomSpawn")
 	bool spawnVrtc = true;
+
+	UPROPERTY(EditAnywhere, Category = "IsBoss")
+	bool isBoss = false;
+
+	UPROPERTY(EditAnywhere, Category = "IsBoss")
+	TSubclassOf<class AActor> boss;
 	
 	void setEnemySpawner();
 	void destroySpawner();

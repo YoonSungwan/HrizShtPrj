@@ -46,5 +46,12 @@ void ASwordBullet::OnSwordOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		UGameplayStatics::ApplyDamage(enemy, BulletDamage, nullptr, this, DamageType);
 
 	}
+
+	AActor* boss = Cast<AActor>(OtherActor);
+	if (boss != nullptr)
+	{
+		UGameplayStatics::ApplyDamage(boss, BulletDamage, nullptr, this, DamageType);
+	}
+	
 	Destroy();
 }
