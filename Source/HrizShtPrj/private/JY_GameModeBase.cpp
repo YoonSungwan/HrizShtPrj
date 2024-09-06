@@ -7,6 +7,7 @@
 #include "SwordPlayer.h"
 #include "FighterPlayer.h"
 #include "Components/TextBlock.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "SaveData.h"
@@ -76,11 +77,41 @@ int32 AJY_GameModeBase::LoadScoreData()
 	return 0;
 }
 
+void AJY_GameModeBase::PlayBossMusic()
+{
+	UAudioComponent* AudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), originBGM);
+
+	BossBGM = GameBoseSound;
+	// 원래 BGM을 멈추고 보스 BGM을 재생
+	if (AudioComponent != nullptr)
+	{
+		AudioComponent->Stop();
+	}
+	UGameplayStatics::PlaySound2D(GetWorld(), BossBGM, 1.f, 1.f, 48.f);
+
+	// 보스 BGM이 끝나면 다시 원래 BGM으로 돌아오도록 타이머 설정
+	GetWorldTimerManager().SetTimer(BossMusicEndTimerHandle, this, &AJY_GameModeBase::ReturnToOriginalBGM, BossMusicDuration, false);
+}
+
+void AJY_GameModeBase::ReturnToOriginalBGM()
+{
+	UAudioComponent* BossComponent = UGameplayStatics::SpawnSound2D(GetWorld(), BossBGM);
+	
+	if (BossComponent != nullptr)
+	{
+		BossComponent->Stop();
+		BossComponent = nullptr;
+	}
+
+	UGameplayStatics::PlaySound2D(GetWorld(), originBGM);
+}
+
 void AJY_GameModeBase::GameOver()
 {
 	if (GameOverUI != nullptr)
 	{
 		gameover = CreateWidget<UGameOverUI>(GetWorld(), GameOverUI);
+		UGameplayStatics::PlaySound2D(GetWorld(), GameEndSound);
 
 		if (gameover != nullptr)
 		{
@@ -108,6 +139,8 @@ void AJY_GameModeBase::BeginPlay()
 
 	HighScore = LoadScoreData();
 
+	
+
 	if (playerHUD != nullptr)
 	{
 		mainUI = CreateWidget<UPlayerHUD>(GetWorld(), playerHUD);
@@ -115,12 +148,17 @@ void AJY_GameModeBase::BeginPlay()
 		if (mainUI != nullptr)
 		{
 			mainUI->AddToViewport();
-
 			APlayerController* pc = GetWorld()->GetFirstPlayerController();
 			pc->SetInputMode(FInputModeGameOnly());
 			pc->SetShowMouseCursor(false);
+
+			originBGM = GamePlaySound;
+			UGameplayStatics::PlaySound2D(GetWorld(), originBGM);
 		}
 
+
+		// 보스 BGM을 위한 타이머 설정 (50초 후)
+		GetWorld()->GetTimerManager().SetTimer(BossMusicTimerHandle, this, &AJY_GameModeBase::PlayBossMusic, BossMusicStartTime, false);
 		// 플레이어 캐릭터를 찾고 HUD를 설정
 		for (TActorIterator<AParentPlayer> player(GetWorld()); player; ++player)
 		{
